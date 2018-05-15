@@ -1,4 +1,4 @@
-package me.wenchieh.common.widget.bottom
+package wenchieh.lu.bottombar
 
 import android.content.Context
 import android.graphics.Color
@@ -11,7 +11,6 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import wenchieh.lu.bottombar.BottomTab
 import java.util.concurrent.atomic.AtomicInteger
 
 /**

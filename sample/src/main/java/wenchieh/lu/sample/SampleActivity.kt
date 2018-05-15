@@ -5,8 +5,8 @@ import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.TypedValue
-import kotlinx.android.synthetic.main.activity_sample.bottomBar
-import kotlinx.android.synthetic.main.activity_sample.message
+import android.widget.TextView
+import wenchieh.lu.bottombar.BottomBar
 import wenchieh.lu.bottombar.BottomTab
 import wenchieh.lu.bottombar.sample.R
 import wenchieh.lu.bottombar.sample.R.mipmap
@@ -18,6 +18,8 @@ class SampleActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_sample)
+    val bottomBar = findViewById<BottomBar>(R.id.bottomBar)
+    val message = findViewById<TextView>(R.id.message)
 
     val tabs = Arrays.asList(
         BottomTab(this, position = 0, text = "首页", iconNormal = mipmap.ic_home_unselected,
