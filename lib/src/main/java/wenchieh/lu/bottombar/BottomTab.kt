@@ -37,8 +37,7 @@ class BottomTab @JvmOverloads constructor(context: Context,
     defStyleAttr: Int = 0, var text: String = "", var iconNormal: Int = 0,
     var iconSelected: Int = 0, var padding: Float = 0f, var textSize: Float = 0f,
     var textColorNormal: Int = Color.BLACK, var textColorSelected: Int = Color.RED,
-    var badgeBackgroundColor: Int = Color.RED,
-    var position: Int = 0, private var mBadgeNumber: Int = 0,
+    var badgeBackgroundColor: Int = Color.RED, private var mBadgeNumber: Int = 0,
     private var isShowPoint: Boolean = false) : View(context, attrs,
     defStyleAttr) {
 

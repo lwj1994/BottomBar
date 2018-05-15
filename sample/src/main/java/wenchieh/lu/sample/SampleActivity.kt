@@ -1,6 +1,7 @@
 package wenchieh.lu.sample
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -20,28 +21,33 @@ class SampleActivity : AppCompatActivity() {
     setContentView(R.layout.activity_sample)
     val bottomBar = findViewById<BottomBar>(R.id.bottomBar)
     val message = findViewById<TextView>(R.id.message)
+    val xml = findViewById<TextView>(R.id.xml)
 
+    xml.setOnClickListener {
+      startActivity(Intent(this@SampleActivity, SampleActivityXML::class.java))
+    }
     val tabs = Arrays.asList(
-        BottomTab(this, position = 0, text = "首页", iconNormal = mipmap.ic_home_unselected,
+        BottomTab(this, text = "首页", iconNormal = mipmap.ic_home_unselected,
             iconSelected = R.mipmap.ic_home, mBadgeNumber = 8),
-        BottomTab(this, position = 1, text = "发现", iconNormal = R.mipmap.ic_home_unselected,
+        BottomTab(this, text = "发现", iconNormal = R.mipmap.ic_home_unselected,
             iconSelected = R.mipmap.ic_home, mBadgeNumber = 22),
-        BottomTab(this, position = 2, iconNormal = R.mipmap.ic_home_unselected,
+        BottomTab(this, iconNormal = R.mipmap.ic_home_unselected,
             iconSelected = R.mipmap.ic_home, mBadgeNumber = 888),
-        BottomTab(this, position = 3, text = "消息", iconNormal = R.mipmap.ic_home_unselected,
+        BottomTab(this, text = "消息", iconNormal = R.mipmap.ic_home_unselected,
             iconSelected = R.mipmap.ic_home, isShowPoint = true),
-        BottomTab(this, position = 4, text = "我的", iconNormal = R.mipmap.ic_home_unselected,
+        BottomTab(this, text = "我的", iconNormal = R.mipmap.ic_home_unselected,
             iconSelected = R.mipmap.ic_home))
 
     val array = tabs.toTypedArray()
     bottomBar.setupTab(dp2px(9f), Color.GRAY, Color.RED, *array)
 
     bottomBar.setOnSelectedListener { pre, cur ->
-      message.text = (bottomBar.getChildAt(cur)as BottomTab).text +"\n prePosition = $pre, select curPosition = $cur"
+      message.text = (bottomBar.getChildAt(
+          cur) as BottomTab).text + "\n prePosition = $pre, select curPosition = $cur"
     }
 
     bottomBar.setOnReSelectedListener {
-      message.text = (bottomBar.getChildAt(it)as BottomTab).text +"\n select curPosition = $it"
+      message.text = (bottomBar.getChildAt(it) as BottomTab).text + "\n reSelect curPosition = $it"
     }
 
 

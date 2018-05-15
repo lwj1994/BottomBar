@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="wenchieh.lu.sample.SampleActivity"
     >
 
@@ -17,20 +17,22 @@
       android:layout_marginStart="@dimen/activity_horizontal_margin"
       android:layout_marginTop="@dimen/activity_vertical_margin"
       android:text="@string/title_home"
-      app:layout_constraintLeft_toLeftOf="parent"
-      app:layout_constraintTop_toTopOf="parent"
       />
 
-  <me.wenchieh.common.widget.bottom.BottomBar
+  <Button
+      android:id="@+id/xml"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="200dp"
+      android:text="usage in xml"
+      />
+  <wenchieh.lu.bottombar.BottomBar
       android:id="@+id/bottomBar"
-      android:layout_width="0dp"
+      android:layout_width="match_parent"
       android:layout_height="50dp"
-      android:layout_marginEnd="0dp"
-      android:layout_marginStart="0dp"
+      android:layout_gravity="bottom"
       android:background="?android:attr/windowBackground"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintLeft_toLeftOf="parent"
-      app:layout_constraintRight_toRightOf="parent"
       />
 
-</android.support.constraint.ConstraintLayout>
+
+</FrameLayout>

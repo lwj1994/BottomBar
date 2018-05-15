@@ -1,7 +1,6 @@
 package wenchieh.lu.bottombar
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Parcel
@@ -24,11 +23,16 @@ class BottomBar @JvmOverloads constructor(context: Context,
     private var onReSelectedListener: (position: Int) -> Unit = { }
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
-  private var mCurrentPosition = -1
-  private var mPreviousPosition = -1
+  private var mCurrentIndex = -1
+  private var mPreviousIndex = -1
+  private var isSetup = false
 
   init {
     orientation = HORIZONTAL
+    post {
+      if (!isSetup)
+        setupTab()
+    }
   }
 
   /**
@@ -52,28 +56,48 @@ class BottomBar @JvmOverloads constructor(context: Context,
   /**
    * init BottomTab
    */
-  fun setupTab(padding: Float, textColorNormal: Int = Color.GRAY, textColorSelected: Int = Color.DKGRAY,
+  fun setupTab(padding: Float = 0f, textColorNormal: Int = 0, textColorSelected: Int = 0,
       vararg tabs: BottomTab) {
-    if (tabs.isEmpty()) return
-    for (i in tabs.indices) {
-      addView(tabs[i].apply {
-        layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT).apply {
-          weight = 1f
+    fun applyView(view: BottomTab?) =
+        view?.apply {
+          layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT).apply {
+            weight = 1f
+          }
+          if (padding != 0f)
+            this.padding = padding
+          if (textColorNormal != 0)
+            this.textColorNormal = textColorNormal
+          if (textColorSelected != 0)
+            this.textColorSelected = textColorSelected
+
+          if (id == View.NO_ID)
+            id = if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
+              View.generateViewId()
+            } else {
+              generateViewIdV16()
+            }
         }
-        this.padding = padding
-        this.textColorNormal = textColorNormal
-        this.textColorSelected = textColorSelected
-        setOnClickListener {
+
+    // add view in xml
+    if (tabs.isEmpty()) {
+      for (i in 0 until childCount) {
+        val view = getChildAt(i) as? BottomTab ?: return
+        applyView(view)
+        view.setOnClickListener {
+          triggerListener(i)
+        }
+      }
+    }
+    // add view in code
+    else {
+      for (i in tabs.indices) {
+        addView(applyView(tabs[i]))
+        tabs[i].setOnClickListener {
           triggerListener(tabs, i)
         }
-        id = if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
-          View.generateViewId()
-        } else {
-          generateViewIdV16()
-        }
-      })
-
+      }
     }
+    isSetup = true
   }
 
   /**
@@ -81,24 +105,39 @@ class BottomBar @JvmOverloads constructor(context: Context,
    * @param nextPosition the next position to go
    */
   private fun triggerListener(tabs: Array<out BottomTab>, toIndex: Int) {
-
-    if (mCurrentPosition == tabs[toIndex].position && mPreviousPosition != -1) {
-      onReSelectedListener(mCurrentPosition)
+    if (tabs.isEmpty()) return
+    if (mCurrentIndex == toIndex && mPreviousIndex != -1) {
+      onReSelectedListener(mCurrentIndex)
       return
     }
-    onSelected(toIndex, mCurrentPosition, tabs[toIndex].position, onSelectedListener)
-    mPreviousPosition = mCurrentPosition
-    mCurrentPosition = tabs[toIndex].position
+    onSelected( mCurrentIndex, toIndex, onSelectedListener)
+    mPreviousIndex = mCurrentIndex
+    mCurrentIndex = toIndex
   }
 
-  private fun onSelected(selected: Int, prePosition: Int, position: Int,
+  /**
+   * change positions and trigger listener
+   * @param nextPosition the next position to go
+   */
+  private fun triggerListener(toIndex: Int) {
+    if (childCount == 0) return
+    if (mCurrentIndex == toIndex && mPreviousIndex != -1) {
+      onReSelectedListener(mCurrentIndex)
+      return
+    }
+    onSelected(mCurrentIndex, toIndex, onSelectedListener)
+    mPreviousIndex = mCurrentIndex
+    mCurrentIndex = toIndex
+  }
+
+  private fun onSelected(preIndex: Int, curIndex: Int,
       onSelectedListener: (prePosition: Int, position: Int) -> Unit) {
 
     for (i in 0 until childCount) {
-      getChildAt(i).isSelected = i == selected
+      getChildAt(i).isSelected = i == curIndex
     }
 
-    onSelectedListener(prePosition, position)
+    onSelectedListener(preIndex, curIndex)
   }
 
   /**
@@ -106,8 +145,8 @@ class BottomBar @JvmOverloads constructor(context: Context,
    */
   override fun onSaveInstanceState(): Parcelable {
     return SavedState(super.onSaveInstanceState()).apply {
-      prePosition = mPreviousPosition
-      curPosition = mCurrentPosition
+      preIndex = mPreviousIndex
+      curIndex = mCurrentIndex
     }
   }
 
@@ -124,29 +163,29 @@ class BottomBar @JvmOverloads constructor(context: Context,
   }
 
   private fun restoreState(savedState: SavedState) {
-    mPreviousPosition = savedState.prePosition
-    mCurrentPosition = savedState.curPosition
+    mPreviousIndex = savedState.preIndex
+    mCurrentIndex = savedState.curIndex
     post {
-      onSelected(mCurrentPosition, mPreviousPosition, mCurrentPosition, onSelectedListener)
+      onSelected(mPreviousIndex, mCurrentIndex, onSelectedListener)
     }
   }
 
   private class SavedState : BaseSavedState {
-    var prePosition = -1
-    var curPosition = 0
+    var preIndex = -1
+    var curIndex = 0
 
 
     constructor(superState: Parcelable) : super(superState)
 
     private constructor(parcel: Parcel) : super(parcel) {
-      prePosition = parcel.readInt()
-      curPosition = parcel.readInt()
+      preIndex = parcel.readInt()
+      curIndex = parcel.readInt()
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
       super.writeToParcel(parcel, flags)
-      parcel.writeInt(prePosition)
-      parcel.writeInt(curPosition)
+      parcel.writeInt(preIndex)
+      parcel.writeInt(curIndex)
     }
 
     override fun describeContents(): Int {
