@@ -13,7 +13,7 @@ its Child View inherited from View. drawing directly with code instead of using 
 ## Download
 Grab via Gradle:
 ```
-implementation 'me.wenchieh:Bottombar:0.0.1'
+implementation 'me.wenchieh:Bottombar:<latest-version>'
 ```
 or Maven:
 
@@ -28,8 +28,9 @@ or Maven:
 
 ## How to use
 ### support attrs in BottomTab
+
 Name | Type | Des
-- | :-: | -:
+| --- | ---|---
 tabIconNormal | reference | the normal icon
 tabIconSelected | reference | the selected icon
 tabText | string | text
