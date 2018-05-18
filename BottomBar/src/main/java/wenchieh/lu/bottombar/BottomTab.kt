@@ -37,7 +37,7 @@ class BottomTab @JvmOverloads constructor(context: Context,
     defStyleAttr: Int = 0, var text: String = "", var iconNormal: Int = 0,
     var iconSelected: Int = 0, var padding: Float = 0f, var textSize: Float = 0f,
     var textColorNormal: Int = Color.BLACK, var textColorSelected: Int = Color.RED,
-    var badgeBackgroundColor: Int = Color.RED, private var mBadgeNumber: Int = 0,
+    var badgeBackgroundColor: Int = Color.RED, private var badgeNumber: Int = 0,
     private var isShowPoint: Boolean = false, var iconNormalBt: Bitmap? = null,
     var iconSelectedBt: Bitmap? = null) : View(context, attrs,
     defStyleAttr) {
@@ -244,10 +244,10 @@ class BottomTab @JvmOverloads constructor(context: Context,
       return
     }
 
-    if (mBadgeNumber > 0) {
+    if (badgeNumber > 0) {
       badgeTextPaint.textSize = dp2px(if (i / 1.5f == 0f) 5f else i / 1.5f)
 
-      val number = if (mBadgeNumber > 99) "99+" else mBadgeNumber.toString()
+      val number = if (badgeNumber > 99) "99+" else badgeNumber.toString()
       val width: Int
       val height = dp2px(i.toFloat()).toInt()
       val bitmap: Bitmap
@@ -307,7 +307,7 @@ class BottomTab @JvmOverloads constructor(context: Context,
 
   fun clearBadge() {
     isShowPoint = false
-    mBadgeNumber = -1
+    badgeNumber = -1
     postInvalidate()
   }
 
@@ -315,7 +315,7 @@ class BottomTab @JvmOverloads constructor(context: Context,
     if (num <= 0) {
       throw IllegalArgumentException("num must > 0")
     }
-    mBadgeNumber = num
+    badgeNumber = num
     isShowPoint = false
     postInvalidate()
   }
@@ -453,5 +453,107 @@ class BottomTab @JvmOverloads constructor(context: Context,
         context.resources.getDrawable(drawableRes)
       }
 
+
+  class Builder(private val context: Context) {
+    private var text: String = ""
+    private var textSize = 12f
+    private var iconNormal: Int = 0
+    private var iconSelected: Int = 0
+    private var iconNormalBt: Bitmap? = null
+    private var iconSelectedBt: Bitmap? = null
+    private var textColorNormal = 0
+    private var textColorSelected = 0
+    private var padding = 0f
+    private var badgeBackgroundColor = 0
+    private var badgeNumber = 0
+    private var isShowPoint = false
+
+
+    fun text(text: String) =
+        apply {
+          this.text = text
+        }
+
+
+    fun textSize(textSize: Float) =
+        apply {
+          this.textSize = textSize
+        }
+
+
+    fun iconNormal(iconNormal: Int) =
+        apply {
+          this.iconNormal = iconNormal
+        }
+
+
+    fun iconSelected(iconSelected: Int) =
+        apply {
+          this.iconSelected = iconSelected
+        }
+
+
+    fun iconNormalBt(iconNormalBt: Bitmap) =
+        apply {
+          this.iconNormalBt = iconNormalBt
+        }
+
+
+    fun iconSelectedBt(iconSelectedBt: Bitmap) =
+        apply {
+          this.iconSelectedBt = iconSelectedBt
+        }
+
+
+    fun textColorNormal(textColorNormal: Int) =
+        apply {
+          this.textColorNormal = textColorNormal
+        }
+
+
+    fun textColorSelected(textColorSelected: Int) =
+        apply {
+          this.textColorSelected = textColorSelected
+        }
+
+
+    fun padding(padding: Float) =
+        apply {
+          this.padding = padding
+        }
+
+    fun badgeBackgroundColor(badgeBackgroundColor: Int) =
+        apply {
+          this.badgeBackgroundColor = badgeBackgroundColor
+        }
+
+
+    fun badgeNumber(badgeNumber: Int) =
+        apply {
+          this.badgeNumber = badgeNumber
+        }
+
+
+    fun isShowPoint(isShowPoint: Boolean) =
+        apply {
+          this.isShowPoint = isShowPoint
+        }
+
+
+    fun build() = BottomTab(context).apply {
+      text = this@Builder.text
+      textSize = this@Builder.textSize
+      textColorNormal = this@Builder.textColorNormal
+      textColorSelected = this@Builder.textColorSelected
+      iconNormal = this@Builder.iconNormal
+      iconSelected = this@Builder.iconSelected
+      iconNormalBt = this@Builder.iconNormalBt
+      iconSelectedBt = this@Builder.iconSelectedBt
+      padding = this@Builder.padding
+      badgeBackgroundColor = this@Builder.badgeBackgroundColor
+      badgeNumber = this@Builder.badgeNumber
+      isShowPoint = this@Builder.isShowPoint
+    }
+  }
 }
 

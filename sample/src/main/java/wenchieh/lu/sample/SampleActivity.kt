@@ -26,13 +26,17 @@ class SampleActivity : AppCompatActivity() {
     xml.setOnClickListener {
       startActivity(Intent(this@SampleActivity, SampleActivityXML::class.java))
     }
-    val tabs = Arrays.asList(
-        BottomTab(this, text = "首页", iconNormal = mipmap.ic_home_unselected,
-            iconSelected = R.mipmap.ic_home, mBadgeNumber = 8),
+
+    val home = BottomTab.Builder(this).text("首页")
+        .iconNormal(mipmap.ic_home_unselected)
+        .iconSelected(mipmap.ic_home_unselected)
+        .badgeNumber(8).build()
+
+    val tabs = Arrays.asList(home,
         BottomTab(this, text = "发现", iconNormal = R.mipmap.ic_home_unselected,
-            iconSelected = R.mipmap.ic_home, mBadgeNumber = 22),
+            iconSelected = R.mipmap.ic_home, badgeNumber = 22),
         BottomTab(this, iconNormal = R.mipmap.ic_home_unselected,
-            iconSelected = R.mipmap.ic_home, mBadgeNumber = 888),
+            iconSelected = R.mipmap.ic_home, badgeNumber = 888),
         BottomTab(this, text = "消息", iconNormal = R.mipmap.ic_home_unselected,
             iconSelected = R.mipmap.ic_home, isShowPoint = true),
         BottomTab(this, text = "我的", iconNormal = R.mipmap.ic_home_unselected,
