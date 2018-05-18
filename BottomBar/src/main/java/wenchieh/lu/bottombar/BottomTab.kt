@@ -540,20 +540,19 @@ class BottomTab @JvmOverloads constructor(context: Context,
         }
 
 
-    fun build() = BottomTab(context).apply {
-      text = this@Builder.text
-      textSize = this@Builder.textSize
-      textColorNormal = this@Builder.textColorNormal
-      textColorSelected = this@Builder.textColorSelected
-      iconNormal = this@Builder.iconNormal
-      iconSelected = this@Builder.iconSelected
-      iconNormalBt = this@Builder.iconNormalBt
-      iconSelectedBt = this@Builder.iconSelectedBt
-      padding = this@Builder.padding
-      badgeBackgroundColor = this@Builder.badgeBackgroundColor
-      badgeNumber = this@Builder.badgeNumber
-      isShowPoint = this@Builder.isShowPoint
-    }
+    fun build() = BottomTab(context, iconNormal = iconNormal
+        , iconSelected = iconSelected, iconNormalBt = iconNormalBt,
+        iconSelectedBt = iconSelectedBt)
+        .apply {
+          text = this@Builder.text
+          textSize = this@Builder.textSize
+          textColorNormal = this@Builder.textColorNormal
+          textColorSelected = this@Builder.textColorSelected
+          padding = this@Builder.padding
+          badgeBackgroundColor = this@Builder.badgeBackgroundColor
+          badgeNumber = this@Builder.badgeNumber
+          isShowPoint = this@Builder.isShowPoint
+        }
   }
 }
 
