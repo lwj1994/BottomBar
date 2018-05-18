@@ -38,7 +38,8 @@ class BottomTab @JvmOverloads constructor(context: Context,
     var iconSelected: Int = 0, var padding: Float = 0f, var textSize: Float = 0f,
     var textColorNormal: Int = Color.BLACK, var textColorSelected: Int = Color.RED,
     var badgeBackgroundColor: Int = Color.RED, private var mBadgeNumber: Int = 0,
-    private var isShowPoint: Boolean = false) : View(context, attrs,
+    private var isShowPoint: Boolean = false, var iconNormalBt: Bitmap? = null,
+    var iconSelectedBt: Bitmap? = null) : View(context, attrs,
     defStyleAttr) {
 
   private var mAlpha = 0
@@ -53,19 +54,22 @@ class BottomTab @JvmOverloads constructor(context: Context,
   private lateinit var badgeTextPaint: Paint
   private lateinit var badgeCanvas: Canvas
   private lateinit var badgeRF: RectF
-  private var iconNormalBt = if (iconNormal == 0) null else getDrawable(iconNormal)?.toBitmap()
-  private var iconSelectedBt = if (iconSelected == 0) null else getDrawable(
-      iconSelected)?.toBitmap()
 
   init {
     Log.d(TAG, "init")
+    if (iconNormalBt == null) {
+      iconNormalBt = if (iconNormal == 0) null else getDrawable(iconNormal)?.toBitmap()
+    }
+    if (iconSelectedBt == null) {
+      iconSelectedBt = if (iconSelected == 0) null else getDrawable(
+          iconSelected)?.toBitmap()
+    }
     if (padding == 0f) padding = dp2px(5f)
     if (textSize == 0f) textSize = sp2px(12f)
 
     initAttrs(context, attrs, defStyleAttr)
     initDrawTools()
   }
-
 
   private fun initDrawTools() {
     mIconPaint = Paint(Paint.ANTI_ALIAS_FLAG)
