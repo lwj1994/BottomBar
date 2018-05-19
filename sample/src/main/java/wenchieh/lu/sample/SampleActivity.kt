@@ -29,8 +29,10 @@ class SampleActivity : AppCompatActivity() {
 
     val home = BottomTab.Builder(this).text("首页")
         .iconNormal(mipmap.ic_home_unselected)
-        .iconSelected(mipmap.ic_home_unselected)
-        .badgeNumber(8).build()
+        .iconSelected(mipmap.ic_home)
+        .padding(500f)
+        .badgeNumber(8)
+        .build()
 
     val tabs = Arrays.asList(home,
         BottomTab(this, text = "发现", iconNormal = R.mipmap.ic_home_unselected,

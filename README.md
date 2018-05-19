@@ -13,7 +13,7 @@ its Child View inherited from View. drawing directly with code instead of using 
 ## Download
 Grab via Gradle:
 ```
-implementation 'me.wenchieh:Bottombar:<latest-version>'
+compile 'me.wenchieh:BottomBar:0.0.2'
 ```
 or Maven:
 
@@ -21,7 +21,7 @@ or Maven:
 <dependency>
   <groupId>me.wenchieh</groupId>
   <artifactId>BottomBar</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <type>pom</type>
 </dependency>
 ```

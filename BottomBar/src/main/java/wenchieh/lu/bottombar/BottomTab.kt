@@ -97,7 +97,7 @@ class BottomTab @JvmOverloads constructor(context: Context,
     }
     badgeTextPaint = Paint().apply {
       color = Color.WHITE
-      textSize = dp2px(textSize)
+      textSize = dp2px(textSize, context)
       isAntiAlias = true
       textAlign = Paint.Align.CENTER
       typeface = Typeface.DEFAULT_BOLD
@@ -282,6 +282,11 @@ class BottomTab @JvmOverloads constructor(context: Context,
     }
   }
 
+  private fun dp2px(value: Float) =
+      wenchieh.lu.bottombar.dp2px(value, context)
+
+  private fun sp2px(value: Float) =
+      wenchieh.lu.bottombar.sp2px(value, context)
 
   private fun Rect.availableToDrawRect(bitmap: Bitmap) {
     var dx = 0f
@@ -326,12 +331,6 @@ class BottomTab @JvmOverloads constructor(context: Context,
     invalidate()
   }
 
-  private fun dp2px(value: Float) =
-      TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, resources.displayMetrics)
-
-
-  private fun sp2px(value: Float) =
-      TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, value, resources.displayMetrics)
 
   override fun onSaveInstanceState(): Parcelable {
     Log.d(TAG, "onSaveInstanceState")
@@ -456,7 +455,7 @@ class BottomTab @JvmOverloads constructor(context: Context,
 
   class Builder(private val context: Context) {
     private var text: String = ""
-    private var textSize = 12f
+    private var textSize = 0f
     private var iconNormal: Int = 0
     private var iconSelected: Int = 0
     private var iconNormalBt: Bitmap? = null
@@ -468,6 +467,11 @@ class BottomTab @JvmOverloads constructor(context: Context,
     private var badgeNumber = 0
     private var isShowPoint = false
 
+
+    init {
+      if (padding == 0f) padding = dp2px(5f, context)
+      if (textSize == 0f) textSize = sp2px(12f, context)
+    }
 
     fun text(text: String) =
         apply {
@@ -540,19 +544,25 @@ class BottomTab @JvmOverloads constructor(context: Context,
         }
 
 
-    fun build() = BottomTab(context, iconNormal = iconNormal
-        , iconSelected = iconSelected, iconNormalBt = iconNormalBt,
-        iconSelectedBt = iconSelectedBt)
-        .apply {
-          text = this@Builder.text
-          textSize = this@Builder.textSize
-          textColorNormal = this@Builder.textColorNormal
-          textColorSelected = this@Builder.textColorSelected
-          padding = this@Builder.padding
-          badgeBackgroundColor = this@Builder.badgeBackgroundColor
-          badgeNumber = this@Builder.badgeNumber
-          isShowPoint = this@Builder.isShowPoint
-        }
+    fun build() = BottomTab(context,
+        iconNormal = iconNormal,
+        iconSelected = iconSelected,
+        iconNormalBt = iconNormalBt,
+        iconSelectedBt = iconSelectedBt,
+        text = text,
+        padding = padding,
+        textSize = textSize,
+        textColorNormal = textColorNormal,
+        textColorSelected = textColorSelected,
+        badgeBackgroundColor = badgeBackgroundColor,
+        badgeNumber = badgeNumber,
+        isShowPoint = isShowPoint)
   }
 }
 
+private fun dp2px(value: Float, context: Context) =
+    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, context.resources.displayMetrics)
+
+
+private fun sp2px(value: Float, context: Context) =
+    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, value, context.resources.displayMetrics)
