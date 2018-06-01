@@ -3,7 +3,6 @@
  ![](https://img.shields.io/badge/build-passing-green.svg)
  ![](https://img.shields.io/badge/license-MIT-orange.svg)
 
-![](http://7xt4re.com1.z0.glb.clouddn.com/20180515152636067658667.jpg)
 
 ## 如何使用
 
@@ -56,11 +55,6 @@ implementation 'me.wenchieh:BottomBar:<lastest version>'
         .build()
 ```
 
-3. 初始化
-
-```
-bottomBar.setupTab(bottomTab)
-```
 
 4. 设置监听
 
@@ -76,7 +70,13 @@ bottomBar.setOnReSelectedListener { cur ->
 }
 ```
 
-5. 设置默认选择的 Tab
+5. 初始化
+
+```
+bottomBar.setupTab(bottomTab)
+```
+
+6. 设置默认选择的 Tab
 
 ```
 // 参数为 tab 在 bottomBar 的位置索引
@@ -109,3 +109,5 @@ bottomBar.select(0)
 ## 直接在布局中设置（不推荐）
 也支持直接在布局中配置 BottomTab，但是比较繁琐。建议使用代码动态配置。
 
+
+![](http://7xt4re.com1.z0.glb.clouddn.com/20180515152636067658667.jpg)
