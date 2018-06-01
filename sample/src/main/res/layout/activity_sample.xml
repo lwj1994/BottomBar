@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@android:color/darker_gray"
     tools:context="wenchieh.lu.sample.SampleActivity"
     >
 
@@ -31,8 +32,8 @@
       android:layout_width="match_parent"
       android:layout_height="50dp"
       android:layout_gravity="bottom"
+      android:paddingTop="5dp"
+      android:paddingBottom="5dp"
       android:background="?android:attr/windowBackground"
       />
-
-
 </FrameLayout>

@@ -37,9 +37,9 @@ class BottomTab @JvmOverloads constructor(context: Context,
     defStyleAttr: Int = 0, var text: String = "", var iconNormal: Int = 0,
     var iconSelected: Int = 0, var padding: Float = 0f, var textSize: Float = 0f,
     var textColorNormal: Int = Color.BLACK, var textColorSelected: Int = Color.RED,
-    var badgeBackgroundColor: Int = Color.RED, private var badgeNumber: Int = 0,
-    private var isShowPoint: Boolean = false, var iconNormalBt: Bitmap? = null,
-    var iconSelectedBt: Bitmap? = null) : View(context, attrs,
+    var badgeBackgroundColor: Int = Color.RED, var badgeNumber: Int = 0,
+    var isShowPoint: Boolean = false, var iconNormalBt: Bitmap? = null,
+    var iconSelectedBt: Bitmap? = null,var badgeTextColor:Int = Color.WHITE) : View(context, attrs,
     defStyleAttr) {
 
   private var mAlpha = 0
@@ -245,7 +245,10 @@ class BottomTab @JvmOverloads constructor(context: Context,
     }
 
     if (badgeNumber > 0) {
-      badgeTextPaint.textSize = dp2px(if (i / 1.5f == 0f) 5f else i / 1.5f)
+      badgeTextPaint.apply {
+        textSize = dp2px(if (i / 1.5f == 0f) 5f else i / 1.5f)
+        color = badgeTextColor
+      }
 
       val number = if (badgeNumber > 99) "99+" else badgeNumber.toString()
       val width: Int
@@ -453,6 +456,9 @@ class BottomTab @JvmOverloads constructor(context: Context,
       }
 
 
+  /**
+   * A Builder to config information for BottomTab
+   */
   class Builder(private val context: Context) {
     private var text: String = ""
     private var textSize = 0f
@@ -460,12 +466,13 @@ class BottomTab @JvmOverloads constructor(context: Context,
     private var iconSelected: Int = 0
     private var iconNormalBt: Bitmap? = null
     private var iconSelectedBt: Bitmap? = null
-    private var textColorNormal = 0
-    private var textColorSelected = 0
+    private var textColorNormal = Color.BLACK
+    private var textColorSelected = Color.RED
     private var padding = 0f
-    private var badgeBackgroundColor = 0
+    private var badgeBackgroundColor = Color.RED
     private var badgeNumber = 0
     private var isShowPoint = false
+    private var badgeTextColor = Color.WHITE
 
 
     init {
@@ -497,13 +504,13 @@ class BottomTab @JvmOverloads constructor(context: Context,
         }
 
 
-    fun iconNormalBt(iconNormalBt: Bitmap) =
+    fun iconNormalBt(iconNormalBt: Bitmap?) =
         apply {
           this.iconNormalBt = iconNormalBt
         }
 
 
-    fun iconSelectedBt(iconSelectedBt: Bitmap) =
+    fun iconSelectedBt(iconSelectedBt: Bitmap?) =
         apply {
           this.iconSelectedBt = iconSelectedBt
         }
@@ -531,18 +538,22 @@ class BottomTab @JvmOverloads constructor(context: Context,
           this.badgeBackgroundColor = badgeBackgroundColor
         }
 
-
     fun badgeNumber(badgeNumber: Int) =
         apply {
           this.badgeNumber = badgeNumber
+          this.isShowPoint = false
         }
-
 
     fun isShowPoint(isShowPoint: Boolean) =
         apply {
           this.isShowPoint = isShowPoint
+          this.badgeNumber = 0
         }
 
+    fun badgeTextColor(color: Int) =
+        apply {
+          this.badgeTextColor = color
+        }
 
     fun build() = BottomTab(context,
         iconNormal = iconNormal,
@@ -556,7 +567,24 @@ class BottomTab @JvmOverloads constructor(context: Context,
         textColorSelected = textColorSelected,
         badgeBackgroundColor = badgeBackgroundColor,
         badgeNumber = badgeNumber,
-        isShowPoint = isShowPoint)
+        isShowPoint = isShowPoint,
+        badgeTextColor = badgeTextColor)
+  }
+
+  fun newBuilder() = Builder(context).apply {
+    iconNormal(iconNormal)
+    iconSelected(iconSelected)
+    iconNormalBt(iconNormalBt)
+    iconSelectedBt(iconSelectedBt)
+    text(text)
+    padding(padding)
+    textSize(textSize)
+    textColorNormal(textColorNormal)
+    textColorSelected(textColorSelected)
+    badgeBackgroundColor(badgeBackgroundColor)
+    badgeNumber(badgeNumber)
+    isShowPoint(isShowPoint)
+    badgeTextColor(badgeTextColor)
   }
 }
 

@@ -3,208 +3,109 @@
  ![](https://img.shields.io/badge/build-passing-green.svg)
  ![](https://img.shields.io/badge/license-MIT-orange.svg)
 
-A Convenient Bottom Bar for Android
-
-
-BottomBar is a small library, written in Kotlin.
-
-its Child View inherited from View. drawing directly with code instead of using a combined View. So there are only 2 layers of View.
-
-## Download
-Grab via Gradle:
-```
-compile 'me.wenchieh:BottomBar:0.0.2'
-```
-or Maven:
-
-```
-<dependency>
-  <groupId>me.wenchieh</groupId>
-  <artifactId>BottomBar</artifactId>
-  <version>0.0.2</version>
-  <type>pom</type>
-</dependency>
-```
-
-## How to use
-### support attrs in BottomTab
-
-Name | Type | Des
-| --- | ---|---
-tabIconNormal | reference | the normal icon
-tabIconSelected | reference | the selected icon
-tabText | string | text
-tabTextSize | dimension | text's size
-textColorNormal | color | normal text color
-textColorSelected | color | selected text color
-badgeBackgroundColor | color | the color of badge backgound
-paddingTextWithIcon | dimension | the padding between text and pictures
-
-
-### use in code
-
-first declare the BottomBar in xml.
-
-```
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="wenchieh.lu.sample.SampleActivity"
-    >
-
-  <TextView
-      android:id="@+id/message"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginLeft="@dimen/activity_horizontal_margin"
-      android:layout_marginStart="@dimen/activity_horizontal_margin"
-      android:layout_marginTop="@dimen/activity_vertical_margin"
-      android:text="@string/title_home"
-      app:layout_constraintLeft_toLeftOf="parent"
-      app:layout_constraintTop_toTopOf="parent"
-      />
-
-  <wenchieh.lu.bottombar.BottomBar
-      android:id="@+id/bottomBar"
-      android:layout_width="0dp"
-      android:layout_height="50dp"
-      android:layout_marginEnd="0dp"
-      android:layout_marginStart="0dp"
-      android:background="?android:attr/windowBackground"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintLeft_toLeftOf="parent"
-      app:layout_constraintRight_toRightOf="parent"
-      />
-
-</android.support.constraint.ConstraintLayout>
-
-```
-
-```kotlin
- val tabs = Arrays.asList(
-        BottomTab(this, text = "首页", iconNormal = mipmap.ic_home_unselected,
-            iconSelected = R.mipmap.ic_home, mBadgeNumber = 8),
-        BottomTab(this, text = "发现", iconNormal = R.mipmap.ic_home_unselected,
-            iconSelected = R.mipmap.ic_home, mBadgeNumber = 22),
-        BottomTab(this, iconNormal = R.mipmap.ic_home_unselected,
-            iconSelected = R.mipmap.ic_home, mBadgeNumber = 888),
-        BottomTab(this, text = "消息", iconNormal = R.mipmap.ic_home_unselected,
-            iconSelected = R.mipmap.ic_home, isShowPoint = true),
-        BottomTab(this, text = "我的", iconNormal = R.mipmap.ic_home_unselected,
-            iconSelected = R.mipmap.ic_home))
-
-    val array = tabs.toTypedArray()
-    bottomBar.setupTab(dp2px(9f), Color.GRAY, Color.RED, *array)
-
-    // when first selected
-    bottomBar.setOnSelectedListener { pre, cur ->
-
-    }
-
-    // when reSelected
-    bottomBar.setOnReSelectedListener {
-
-    }
-
-    // you can select by youself
-    bottomBar.select(0)
-```
-
-### in xml
-```
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="wenchieh.lu.sample.SampleActivity"
-    >
-
-  <TextView
-      android:id="@+id/message"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginLeft="@dimen/activity_horizontal_margin"
-      android:layout_marginStart="@dimen/activity_horizontal_margin"
-      android:layout_marginTop="@dimen/activity_vertical_margin"
-      android:text="@string/title_home"
-      app:layout_constraintLeft_toLeftOf="parent"
-      app:layout_constraintTop_toTopOf="parent"
-      />
-
-  <wenchieh.lu.bottombar.BottomBar
-      android:id="@+id/bottomBar"
-      android:layout_width="0dp"
-      android:layout_height="50dp"
-      android:layout_marginEnd="0dp"
-      android:layout_marginStart="0dp"
-      android:background="?android:attr/windowBackground"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintLeft_toLeftOf="parent"
-      app:layout_constraintRight_toRightOf="parent"
-      >
-
-    <wenchieh.lu.bottombar.BottomTab
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        app:tabText="Home"
-        app:tabTextSize="16sp"
-        app:tabIconNormal="@mipmap/ic_home_unselected"
-        app:tabIconSelected="@mipmap/ic_home"
-        app:paddingTextWithIcon="10dp"
-        app:badgeBackgroundColor="@android:color/holo_red_dark"
-        app:textColorSelected="@color/color333333"
-        app:textColorNormal="@color/colorDADADA"
-        />
-
-    <wenchieh.lu.bottombar.BottomTab
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        app:tabText="Profile"
-        app:tabTextSize="16sp"
-        app:tabIconNormal="@mipmap/ic_home_unselected"
-        app:tabIconSelected="@mipmap/ic_home"
-        app:paddingTextWithIcon="10dp"
-        app:badgeBackgroundColor="@android:color/holo_red_dark"
-        app:textColorSelected="@color/color333333"
-        app:textColorNormal="@color/colorDADADA"
-        />
-
-    <wenchieh.lu.bottombar.BottomTab
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        app:tabText="Message"
-        app:tabTextSize="16sp"
-        app:tabIconNormal="@mipmap/ic_home_unselected"
-        app:tabIconSelected="@mipmap/ic_home"
-        app:paddingTextWithIcon="10dp"
-        app:badgeBackgroundColor="@android:color/holo_red_dark"
-        app:textColorSelected="@color/color333333"
-        app:textColorNormal="@color/colorDADADA"
-        />
-  </wenchieh.lu.bottombar.BottomBar>
-
-</android.support.constraint.ConstraintLayout>
-```
-
-
-
-
-
-
-## Sample
-
-
 ![](http://7xt4re.com1.z0.glb.clouddn.com/20180515152636067658667.jpg)
 
+## 如何使用
+
+1. 添加依赖
+
+```
+implementation 'me.wenchieh:BottomBar:<lastest version>'
+```
+
+2. 在布局中添加 BottomBar 控件
+
+```xml
+ <wenchieh.lu.bottombar.BottomBar
+      android:id="@+id/bottomBar"
+      android:layout_width="match_parent"
+      android:layout_height="50dp"
+      android:layout_gravity="bottom"
+      android:background="?android:attr/windowBackground"
+      />
+```
+
+3. 在代码中给 BottomBar 初始化 BottomTab
+
+```kotlin
+    val home = BottomTab.Builder(this).text("home")
+        // 默认图片资源id，和 bitmap 不能共存
+        .iconNormal(mipmap.ic_home_unselected)
+        // 选择后的图片资源id，和 bitmap 不能共存
+        .iconSelected(mipmap.ic_home)
+        // 默认图片的 bitmap，和资源 id 不能共存
+        .iconNormalBt(normalBt)
+        // 选中图片的 bitmap，和资源 id 不能共存
+        .iconSelectedBt(selectedBt)
+        // 图片和文字之间的间距，单位是 px
+        .padding(dp2px(10f))
+        // 默认字体的颜色
+        .textColorNormal(color(android.R.color.black))
+        // 选择后字体的颜色
+        .textColorSelected(color(android.R.color.holo_red_dark))
+        // 字体的大小
+        .textSize(15f)
+        // 角标文本的数量，文本和圆点只能 2 选 1
+        .badgeNumber(8)
+        // 是否显示圆点，文本和圆点只能 2 选 1
+        .isShowPoint(true)
+        // 角标的背景颜色
+        .badgeBackgroundColor(Color.BLUE)
+        // 角标字体的颜色
+        .badgeTextColor(Color.RED)
+        .build()
+```
+
+3. 初始化
+
+```
+bottomBar.setupTab(bottomTab)
+```
+
+4. 设置监听
+
+```
+// 选择的监听，pre 是上一个 tab 的位置，cur 是当前选择后 tab 的位置
+bottomBar.setOnSelectedListener { pre, cur ->
+
+}
+
+// 再次重复选择的监听
+bottomBar.setOnReSelectedListener { cur ->
+
+}
+```
+
+5. 设置默认选择的 Tab
+
+```
+// 参数为 tab 在 bottomBar 的位置索引
+bottomBar.select(0)
+```
+
+## 从网络中动态加载图片
+支持直接设置 Bitmap。
+
+如果底栏的图片是服务器动态配置的。可以使用 `bottomBar.update(0,home)` 更新某个位置的 tab。
+
+
+```kotlin
+ // 默认的 tab
+ val home = BottomTab.Builder(this)
+        .text("home)
+        .iconNormal(mipmap.ic_home_unselected)
+        .iconSelected(mipmap.ic_home)
+        .build()
+
+
+ // 从网络中请求图片信息后更新 tab
+ val newHomeTab = home.newBuilder()
+         .iconNormalBt(normalBt)
+         .iconSelectedBt(selectedBt).build()
+ bottomBar.update(0, newHomeTab)
+```
+
+
+## 直接在布局中设置（不推荐）
+也支持直接在布局中配置 BottomTab，但是比较繁琐。建议使用代码动态配置。
 

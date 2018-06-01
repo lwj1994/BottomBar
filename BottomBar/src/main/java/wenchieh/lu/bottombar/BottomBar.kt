@@ -56,20 +56,12 @@ class BottomBar @JvmOverloads constructor(context: Context,
   /**
    * init BottomTab
    */
-  fun setupTab(padding: Float = 0f, textColorNormal: Int = 0, textColorSelected: Int = 0,
-      vararg tabs: BottomTab) {
+  fun setupTab(vararg tabs: BottomTab) {
     fun applyView(view: BottomTab?) =
         view?.apply {
           layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT).apply {
             weight = 1f
           }
-          if (padding != 0f)
-            this.padding = padding
-          if (textColorNormal != 0)
-            this.textColorNormal = textColorNormal
-          if (textColorSelected != 0)
-            this.textColorSelected = textColorSelected
-
           if (id == View.NO_ID)
             id = if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
               View.generateViewId()
@@ -110,7 +102,7 @@ class BottomBar @JvmOverloads constructor(context: Context,
       onReSelectedListener(mCurrentIndex)
       return
     }
-    onSelected( mCurrentIndex, toIndex, onSelectedListener)
+    onSelected(mCurrentIndex, toIndex, onSelectedListener)
     mPreviousIndex = mCurrentIndex
     mCurrentIndex = toIndex
   }
@@ -220,6 +212,33 @@ class BottomBar @JvmOverloads constructor(context: Context,
         return result
       }
     }
+  }
+
+  /**
+   * update child view
+   * @param index the index of origin view which you want to update
+   * @param view the new View instead of origin View
+   */
+  fun update(index: Int, view: BottomTab) {
+    val originView = getChildAt(index) ?: return
+
+    (originView as BottomTab).apply {
+      iconNormal = view.iconNormal
+      iconSelected = view.iconSelected
+      iconNormalBt = view.iconNormalBt
+      iconSelectedBt = view.iconSelectedBt
+      text = view.text
+      padding = view.padding
+      textSize = view.textSize
+      textColorNormal = view.textColorNormal
+      textColorSelected = view.textColorSelected
+      badgeBackgroundColor = view.badgeBackgroundColor
+      badgeNumber = view.badgeNumber
+      isShowPoint = view.isShowPoint
+    }
+
+    originView.requestLayout()
+    originView.invalidate()
   }
 
   companion object {
