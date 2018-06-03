@@ -1,5 +1,5 @@
 ## BottomBar
- [ ![Download](https://api.bintray.com/packages/wenchieh/maven/BottomBar/images/download.svg) ](https://bintray.com/wenchieh/maven/BottomBar/_latestVersion)
+ [ ![Download](https://api.bintray.com/packages/wenchieh/maven/bottombar/images/download.svg) ](https://bintray.com/wenchieh/maven/bottombar/_latestVersion)
  ![](https://img.shields.io/badge/build-passing-green.svg)
  ![](https://img.shields.io/badge/license-MIT-orange.svg)
 
@@ -9,7 +9,7 @@
 1. 添加依赖
 
 ```
-implementation 'me.wenchieh:BottomBar:<lastest version>'
+implementation 'me.wenchieh:BottomBar:0.9.1'
 ```
 
 2. 在布局中添加 BottomBar 控件

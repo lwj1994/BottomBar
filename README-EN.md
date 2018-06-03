@@ -1,5 +1,5 @@
 ## BottomBar
- [ [ ![Download](https://api.bintray.com/packages/wenchieh/maven/bottombar/images/download.svg) ](https://bintray.com/wenchieh/maven/bottombar/_latestVersion)
+ [ ![Download](https://api.bintray.com/packages/wenchieh/maven/bottombar/images/download.svg) ](https://bintray.com/wenchieh/maven/bottombar/_latestVersion)
  ![](https://img.shields.io/badge/build-passing-green.svg)
  ![](https://img.shields.io/badge/license-MIT-orange.svg)
 
