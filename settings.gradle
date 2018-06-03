@@ -1,1 +1,1 @@
-include ':sample', ':BottomBar'
+include ':sample', ':bottombar'

@@ -1,5 +1,5 @@
 ## BottomBar
- [ ![Download](https://api.bintray.com/packages/wenchieh/maven/BottomBar/images/download.svg) ](https://bintray.com/wenchieh/maven/BottomBar/_latestVersion)
+ [ [ ![Download](https://api.bintray.com/packages/wenchieh/maven/bottombar/images/download.svg) ](https://bintray.com/wenchieh/maven/bottombar/_latestVersion)
  ![](https://img.shields.io/badge/build-passing-green.svg)
  ![](https://img.shields.io/badge/license-MIT-orange.svg)
 
@@ -13,7 +13,7 @@ its Child View inherited from View. drawing directly with code instead of using 
 ## Download
 Grab via Gradle:
 ```
-implementation 'me.wenchieh:BottomBar:<lastest version>'
+implementation 'me.wenchieh:BottomBar:0.9.1'
 ```
 or Maven:
 
@@ -21,7 +21,7 @@ or Maven:
 <dependency>
   <groupId>me.wenchieh</groupId>
   <artifactId>BottomBar</artifactId>
-  <version>0.0.2</version>
+  <version>0.9.1</version>
   <type>pom</type>
 </dependency>
 ```

@@ -3,8 +3,8 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply from: "keystore.gradle"
 ext {
   groupId = 'me.wenchieh'
-  artifactId = "BottomBar"
-  libVersion = "0.0.6"
+  artifactId = "bottombar"
+  libVersion = "0.9.1"
 }
 version = libVersion
 group = groupId
@@ -18,7 +18,7 @@ bintray {
   override = false
   pkg {
     repo = 'maven'
-    name = 'BottomBar'
+    name = 'bottombar'
     version {
       name = libVersion
     }
@@ -68,7 +68,7 @@ if (project.hasProperty("kotlin")) {
 task javadocJar(type: Jar, dependsOn: javadoc) {
   classifier = 'javadoc'
   from javadoc.destinationDir
-  //  options.encoding = 'UTF-8'
+//  options.encoding = 'UTF-8'
 }
 
 artifacts {
