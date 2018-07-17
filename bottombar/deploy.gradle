@@ -4,7 +4,7 @@ apply from: "keystore.gradle"
 ext {
   groupId = 'me.wenchieh'
   artifactId = "bottombar"
-  libVersion = "0.9.1"
+  libVersion = "1.0.0"
 }
 version = libVersion
 group = groupId

@@ -1,5 +1,6 @@
 package wenchieh.lu.bottombar
 
+import android.annotation.TargetApi
 import android.content.Context
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
@@ -14,8 +15,10 @@ import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * @author Wenchieh.Lu  2018/5/9
+ * 底栏
  *
  */
+@TargetApi(VERSION_CODES.HONEYCOMB)
 class BottomBar @JvmOverloads constructor(context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
@@ -56,12 +59,20 @@ class BottomBar @JvmOverloads constructor(context: Context,
   /**
    * init BottomTab
    */
-  fun setupTab(vararg tabs: BottomTab) {
+  fun setupTab(padding: Float = 0f, textColorNormal: Int = 0, textColorSelected: Int = 0,
+      vararg tabs: BottomTab) {
     fun applyView(view: BottomTab?) =
         view?.apply {
           layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT).apply {
             weight = 1f
           }
+          if (padding != 0f)
+            this.padding = padding
+          if (textColorNormal != 0)
+            this.textColorNormal = textColorNormal
+          if (textColorSelected != 0)
+            this.textColorSelected = textColorSelected
+
           if (id == View.NO_ID)
             id = if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
               View.generateViewId()
@@ -92,9 +103,14 @@ class BottomBar @JvmOverloads constructor(context: Context,
     isSetup = true
   }
 
+  fun setupTab(vararg tabs: BottomTab) {
+    setupTab(0f, 0, 0, *tabs)
+  }
+
+
   /**
    * change positions and trigger listener
-   * @param nextPosition the next position to go
+   * @param toIndex the next position to go
    */
   private fun triggerListener(tabs: Array<out BottomTab>, toIndex: Int) {
     if (tabs.isEmpty()) return
@@ -109,7 +125,7 @@ class BottomBar @JvmOverloads constructor(context: Context,
 
   /**
    * change positions and trigger listener
-   * @param nextPosition the next position to go
+   * @param toIndex the next position to go
    */
   private fun triggerListener(toIndex: Int) {
     if (childCount == 0) return
@@ -235,10 +251,10 @@ class BottomBar @JvmOverloads constructor(context: Context,
       badgeBackgroundColor = view.badgeBackgroundColor
       badgeNumber = view.badgeNumber
       isShowPoint = view.isShowPoint
+      updateTextBounds()
     }
 
     originView.requestLayout()
-    originView.invalidate()
   }
 
   companion object {

@@ -32,15 +32,21 @@ import android.view.View
  *                    https://github.com/yingLanNull/AlphaTabsIndicator/blob/6ccff9e1a226755226559c61b593f1a41230813e/library/src/main/java/com/yinglan/alphatabs/BottomTab.java
  *
  */
-class BottomTab @JvmOverloads constructor(context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0, var text: String = "", var iconNormal: Int = 0,
-    var iconSelected: Int = 0, var padding: Float = 0f, var textSize: Float = 0f,
-    var textColorNormal: Int = Color.BLACK, var textColorSelected: Int = Color.RED,
-    var badgeBackgroundColor: Int = Color.RED, var badgeNumber: Int = 0,
-    var isShowPoint: Boolean = false, var iconNormalBt: Bitmap? = null,
-    var iconSelectedBt: Bitmap? = null,var badgeTextColor:Int = Color.WHITE) : View(context, attrs,
-    defStyleAttr) {
+class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    var text: String = "",
+    var iconNormal: Int = 0,
+    var iconSelected: Int = 0,
+    var padding: Float = 0f,
+    var textSize: Float = 0f,
+    var textColorNormal: Int = Color.BLACK,
+    var textColorSelected: Int = Color.RED,
+    var badgeBackgroundColor: Int = Color.RED,
+    var badgeNumber: Int = 0,
+    var isShowPoint: Boolean = false,
+    var iconNormalBt: Bitmap? = null,
+    var iconSelectedBt: Bitmap? = null,
+    var badgeTextColor: Int = Color.WHITE) : View(context, attrs, defStyleAttr) {
 
   private var mAlpha = 0
   private lateinit var mIconPaint: Paint
@@ -69,6 +75,10 @@ class BottomTab @JvmOverloads constructor(context: Context,
 
     initAttrs(context, attrs, defStyleAttr)
     initDrawTools()
+  }
+
+  fun updateTextBounds() {
+    mTextPaint.getTextBounds(text, 0, text.length, mTextBound)
   }
 
   private fun initDrawTools() {
@@ -161,6 +171,9 @@ class BottomTab @JvmOverloads constructor(context: Context,
             R.styleable.BottomTab_textColorSelected -> {
               textColorSelected = array.getColor(it, textColorSelected)
             }
+            R.styleable.BottomTab_isShowPoint -> {
+              isShowPoint = array.getBoolean(it, false)
+            }
 
           }
         }
@@ -192,6 +205,7 @@ class BottomTab @JvmOverloads constructor(context: Context,
 
   override fun onDraw(canvas: Canvas) {
     super.onDraw(canvas)
+
     // draw icon
     mIconAvailableRect.availableToDrawRect(
         iconNormalBt ?: throw IllegalArgumentException("you must set iconNormal"))
@@ -249,7 +263,6 @@ class BottomTab @JvmOverloads constructor(context: Context,
         textSize = dp2px(if (i / 1.5f == 0f) 5f else i / 1.5f)
         color = badgeTextColor
       }
-
       val number = if (badgeNumber > 99) "99+" else badgeNumber.toString()
       val width: Int
       val height = dp2px(i.toFloat()).toInt()
@@ -286,10 +299,10 @@ class BottomTab @JvmOverloads constructor(context: Context,
   }
 
   private fun dp2px(value: Float) =
-      wenchieh.lu.bottombar.dp2px(value, context)
+      dp2px(value, context)
 
   private fun sp2px(value: Float) =
-      wenchieh.lu.bottombar.sp2px(value, context)
+      sp2px(value, context)
 
   private fun Rect.availableToDrawRect(bitmap: Bitmap) {
     var dx = 0f
@@ -456,9 +469,6 @@ class BottomTab @JvmOverloads constructor(context: Context,
       }
 
 
-  /**
-   * A Builder to config information for BottomTab
-   */
   class Builder(private val context: Context) {
     private var text: String = ""
     private var textSize = 0f
@@ -466,10 +476,10 @@ class BottomTab @JvmOverloads constructor(context: Context,
     private var iconSelected: Int = 0
     private var iconNormalBt: Bitmap? = null
     private var iconSelectedBt: Bitmap? = null
-    private var textColorNormal = Color.BLACK
-    private var textColorSelected = Color.RED
+    private var textColorNormal = 0
+    private var textColorSelected = 0
     private var padding = 0f
-    private var badgeBackgroundColor = Color.RED
+    private var badgeBackgroundColor = 0
     private var badgeNumber = 0
     private var isShowPoint = false
     private var badgeTextColor = Color.WHITE
@@ -495,24 +505,27 @@ class BottomTab @JvmOverloads constructor(context: Context,
     fun iconNormal(iconNormal: Int) =
         apply {
           this.iconNormal = iconNormal
+          this.iconNormalBt = null
         }
 
 
     fun iconSelected(iconSelected: Int) =
         apply {
           this.iconSelected = iconSelected
+          this.iconSelectedBt = null;
         }
 
 
     fun iconNormalBt(iconNormalBt: Bitmap?) =
         apply {
           this.iconNormalBt = iconNormalBt
+          this.iconNormal = 0
         }
-
 
     fun iconSelectedBt(iconSelectedBt: Bitmap?) =
         apply {
           this.iconSelectedBt = iconSelectedBt
+          this.iconSelected = 0
         }
 
 
@@ -538,16 +551,16 @@ class BottomTab @JvmOverloads constructor(context: Context,
           this.badgeBackgroundColor = badgeBackgroundColor
         }
 
+
     fun badgeNumber(badgeNumber: Int) =
         apply {
           this.badgeNumber = badgeNumber
-          this.isShowPoint = false
         }
+
 
     fun isShowPoint(isShowPoint: Boolean) =
         apply {
           this.isShowPoint = isShowPoint
-          this.badgeNumber = 0
         }
 
     fun badgeTextColor(color: Int) =
@@ -571,6 +584,7 @@ class BottomTab @JvmOverloads constructor(context: Context,
         badgeTextColor = badgeTextColor)
   }
 
+
   fun newBuilder() = Builder(context).apply {
     iconNormal(iconNormal)
     iconSelected(iconSelected)
@@ -584,7 +598,6 @@ class BottomTab @JvmOverloads constructor(context: Context,
     badgeBackgroundColor(badgeBackgroundColor)
     badgeNumber(badgeNumber)
     isShowPoint(isShowPoint)
-    badgeTextColor(badgeTextColor)
   }
 }
 

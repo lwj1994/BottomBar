@@ -12,8 +12,8 @@ android {
     main.java.srcDirs += 'src/main/kotlin'
   }
   defaultConfig {
-    minSdkVersion 16
-    targetSdkVersion 27
+//    minSdkVersion 16
+//    targetSdkVersion 27
   }
 
   lintOptions {

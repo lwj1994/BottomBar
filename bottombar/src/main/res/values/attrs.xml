@@ -9,5 +9,6 @@
     <attr format="color" name="textColorSelected"/>
     <attr format="color" name="badgeBackgroundColor"/>
     <attr format="dimension" name="paddingTextWithIcon"/>
+    <attr format="boolean" name="isShowPoint"/>
   </declare-styleable>
 </resources>
