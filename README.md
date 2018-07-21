@@ -9,7 +9,7 @@
 1. 添加依赖
 
 ```
-implementation 'me.wenchieh:BottomBar:0.9.1@aar'
+implementation 'me.wenchieh:bottombar:1.0.0'
 ```
 
 2. 在布局中添加 BottomBar 控件
