@@ -7,6 +7,7 @@ import android.os.Build.VERSION_CODES
 import android.os.Parcel
 import android.os.Parcelable
 import android.os.Parcelable.Creator
+import android.support.v7.widget.LinearLayoutCompat.HORIZONTAL
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
@@ -94,13 +95,18 @@ class BottomBar @JvmOverloads constructor(context: Context,
     // add view in code
     else {
       for (i in tabs.indices) {
-        addView(applyView(tabs[i]))
+        val tab = applyView(tabs[i])
+//        addView(tab)
+        addViewInLayout(tab, -1, tab?.layoutParams, true)
         tabs[i].setOnClickListener {
           triggerListener(tabs, i)
         }
       }
     }
     isSetup = true
+    mCurrentIndex = 0
+    currentTab().isSelected = true
+    requestLayout()
   }
 
   fun setupTab(vararg tabs: BottomTab) {
@@ -211,11 +217,21 @@ class BottomBar @JvmOverloads constructor(context: Context,
     }
   }
 
-  fun select(index: Int) {
+  fun performClick(index: Int) {
     post {
       getChildAt(index)?.performClick()
     }
   }
+
+
+  fun select(index: Int) {
+    mPreviousIndex = mCurrentIndex
+    mCurrentIndex = index
+    for (i in 0 until childCount) {
+      getTab(i).isSelected = i == index
+    }
+  }
+
 
   private val sNextGeneratedId = AtomicInteger(1)
   private fun generateViewIdV16(): Int {
@@ -256,6 +272,16 @@ class BottomBar @JvmOverloads constructor(context: Context,
 
     originView.requestLayout()
   }
+
+  fun currentPosition() = mCurrentIndex
+
+  fun currentTab() = getChildAt(mCurrentIndex) as BottomTab
+
+  fun setCurrentPosition(position: Int) {
+    mCurrentIndex = position
+  }
+
+  fun getTab(position: Int) = getChildAt(position) as BottomTab
 
   companion object {
     private const val TAG = "BottomBar"

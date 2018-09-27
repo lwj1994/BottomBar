@@ -62,7 +62,6 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
   private lateinit var badgeRF: RectF
 
   init {
-    Log.d(TAG, "init")
     if (iconNormalBt == null) {
       iconNormalBt = if (iconNormal == 0) null else getDrawable(iconNormal)?.toBitmap()
     }
@@ -73,7 +72,6 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     if (padding == 0f) padding = dp2px(5f)
     if (textSize == 0f) textSize = sp2px(12f)
 
-    initAttrs(context, attrs, defStyleAttr)
     initDrawTools()
   }
 
@@ -114,70 +112,6 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     }
     badgeCanvas = Canvas()
     badgeRF = RectF()
-  }
-
-  /**
-   * Initialize the Attrs
-   * @param context The Context the view is running in, through which it can
-   *        access the current theme, resources, etc.
-   * @param attrs The attributes of the XML tag that is inflating the view.
-   * @param defStyleAttr An attribute in the current theme that contains a
-   *        reference to a style resource that supplies default values for
-   *        the view. Can be 0 to not look for defaults.
-   */
-  private fun initAttrs(context: Context, attrs: AttributeSet?, defStyleAttr: Int) {
-    val array = context.obtainStyledAttributes(attrs, R.styleable.BottomTab,
-        defStyleAttr, 0)
-
-    (0..array.indexCount).asSequence()
-        .map {
-          array.getIndex(it)
-        }
-        .forEach {
-          when (it) {
-            R.styleable.BottomTab_badgeBackgroundColor -> {
-              badgeBackgroundColor = array.getColor(it, badgeBackgroundColor)
-            }
-
-            R.styleable.BottomTab_paddingTextWithIcon -> {
-              padding = array.getDimension(it, padding)
-            }
-
-            R.styleable.BottomTab_tabIconNormal -> {
-              iconNormalBt = (array.getDrawable(
-                  it)?.toBitmap() ?: throw IllegalArgumentException(
-                  "you must assign a tabIconNormal in BottomTab's xml or init it in code"))
-            }
-
-            R.styleable.BottomTab_tabIconSelected -> {
-              iconSelectedBt = (array.getDrawable(
-                  it)?.toBitmap() ?: throw IllegalArgumentException(
-                  "you must assign a tabIconSelected in BottomTab's xml or init it in code"))
-            }
-
-            R.styleable.BottomTab_tabText -> {
-              if (TextUtils.isEmpty(text))
-                text = array.getString(it)
-            }
-
-            R.styleable.BottomTab_tabTextSize -> {
-              textSize = array.getDimension(it, textSize)
-            }
-
-            R.styleable.BottomTab_textColorNormal -> {
-              textColorNormal = array.getColor(it, textColorNormal)
-            }
-
-            R.styleable.BottomTab_textColorSelected -> {
-              textColorSelected = array.getColor(it, textColorSelected)
-            }
-            R.styleable.BottomTab_isShowPoint -> {
-              isShowPoint = array.getBoolean(it, false)
-            }
-
-          }
-        }
-    array.recycle()
   }
 
   override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -322,11 +256,15 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
   }
 
   fun showBadgePoint(show: Boolean) {
+    if (show == isShowPoint) {
+      return
+    }
     isShowPoint = show
-    postInvalidate()
+    invalidate()
   }
 
   fun clearBadge() {
+    if (!isShowPoint) return
     isShowPoint = false
     badgeNumber = -1
     postInvalidate()
