@@ -1,16 +1,14 @@
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
-ext {
-  groupId = 'me.wenchieh'
-  artifactId = "bottombar"
-  libVersion = "1.0.2"
-}
+apply plugin: 'org.jetbrains.dokka-android'
+
 version = libVersion
 group = groupId
 
+
+// Bintray
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
-
 bintray {
   user = properties.getProperty("bintray.user")
   key = properties.getProperty("bintray.apikey")
@@ -19,36 +17,62 @@ bintray {
   override = false
   pkg {
     repo = 'maven'
-    name = 'bottombar'
+    name = pkg_name
     version {
       name = libVersion
+      released = new Date()
     }
   }
 }
 
 install {
   repositories.mavenInstaller {
-    pom.project {
-      packaging 'aar'
-      groupId groupId
-      artifactId artifactId
-      version libVersion
-      name artifactId
+    pom {
+      project {
+        packaging 'aar'
+        groupId groupId
+        artifactId artifactId
+        version libVersion
+        name artifactId
+        description libraryDescription
+        url siteUrl
+        licenses {
+          license {
+            name licenseName
+            url licenseUrl
+          }
+        }
+        developers {
+          developer {
+            id developerId
+            name developerName
+            email developerEmail
+          }
+        }
+        scm {
+          connection gitUrl
+          developerConnection gitUrl
+          url siteUrl
+        }
+      }
     }
   }
 }
 
 
 //just copy paste the lines below
-if (project.hasProperty("kotlin")) {
+def isAndroid = project.hasProperty("android")
+def isKotlin = project.hasProperty("kotlin")
+def isJava = project.hasProperty("Java")
+
+if (isKotlin) {
   //Kotlin libraries
   task sourcesJar(type: Jar) {
     classifier = 'sources'
-    from android.sourceSets.main.java.srcDirs
+    if (isAndroid) from android.sourceSets.main.java.srcDirs else from sourceSets.main.java.srcDirs
   }
-
-  task javadoc(type: Javadoc, dependsOn: dokka) {}
-} else if (project.hasProperty("android")) {
+  if (isAndroid) task javadoc(type: Javadoc, dependsOn: dokka) {}
+} else if (isAndroid) {
   task sourcesJar(type: Jar) {
     classifier = 'sources'
     from android.sourceSets.main.java.srcDirs

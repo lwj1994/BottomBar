@@ -1,16 +1,24 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'com.jfrog.bintray'
-apply plugin: 'org.jetbrains.dokka'
-apply plugin: 'maven-publish'
-apply from: 'deploy.gradle'
+
+ext {
+  libVersion = "1.0.2"
+  groupId = "me.wenchieh"
+  artifactId = "bottombar"
+  pkg_name = "bottombar"
+  libraryDescription = 'bottombar'
+  siteUrl = 'https://github.com/lwj1994/BottomBar.git'
+  gitUrl = 'https://github.com/lwj1994/BottomBar.git'
+  developerId = 'wenchieh'
+  developerName = 'wenchieh'
+  developerEmail = 'alwjlola@gmail.com'
+  licenseName = 'The Apache Software License, Version 2.0'
+  licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+  allLicenses = ["Apache-2.0"]
+}
 
 android {
   compileSdkVersion 28
-
-  sourceSets {
-    main.java.srcDirs += 'src/main/kotlin'
-  }
   defaultConfig {
     minSdkVersion 16
     targetSdkVersion 28
@@ -21,18 +29,7 @@ android {
   }
 }
 
-dokka {
-  outputFormat = 'html'
-  outputDirectory = "$buildDir/javadoc"
-}
 
-tasks.withType(Javadoc) {
-  options {
-    encoding "UTF-8"
-    charSet 'UTF-8'
-    links "http://docs.oracle.com/javase/7/docs/api"
-  }
-}
 
 dependencies {
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -44,4 +41,4 @@ dependencies {
   androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
 
-
+apply from: '../deploy.gradle'
