@@ -16,13 +16,13 @@ import android.os.Build.VERSION_CODES
 import android.os.Parcel
 import android.os.Parcelable
 import android.os.Parcelable.Creator
-import android.support.annotation.DrawableRes
-import android.support.annotation.Px
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.Log
 import android.util.TypedValue
 import android.view.View
+import androidx.annotation.DrawableRes
+import androidx.annotation.Px
 
 /**
  * @author Wenchieh.Lu  2018/5/8
@@ -46,6 +46,8 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     var isShowPoint: Boolean = false,
     var iconNormalBt: Bitmap? = null,
     var iconSelectedBt: Bitmap? = null,
+    var tabPaddingTop: Int = 0,
+    var tabPaddingBottom: Int = 0,
     var badgeTextColor: Int = Color.WHITE) : View(context, attrs, defStyleAttr) {
 
   private var mAlpha = 0
@@ -62,6 +64,7 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
   private lateinit var badgeRF: RectF
 
   init {
+    Log.d(TAG, "init")
     if (iconNormalBt == null) {
       iconNormalBt = if (iconNormal == 0) null else getDrawable(iconNormal)?.toBitmap()
     }
@@ -73,6 +76,13 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     if (textSize == 0f) textSize = sp2px(12f)
 
     initDrawTools()
+    setPadding(0,tabPaddingTop,0,tabPaddingBottom)
+    val typeValue = TypedValue()
+    context.theme
+        .resolveAttribute(android.R.attr.selectableItemBackground, typeValue, true)
+    val attribute = intArrayOf(android.R.attr.selectableItemBackground)
+    val typedArray = context.theme.obtainStyledAttributes(typeValue.resourceId, attribute);
+    background = typedArray.getDrawable(0)
   }
 
   fun updateTextBounds() {
@@ -181,9 +191,10 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     val j = measuredHeight / 9
     i = if (i >= j) j else i
 
-    // if showPoint, don't show number
+
     val left = measuredWidth / 10 * 6f
-    val top = dp2px(0.toFloat())
+    val top = tabPaddingTop.toFloat()
+    // if showPoint, don't show number
     if (isShowPoint) {
       i = if (i > 10) 10 else i
       val width = dp2px(i.toFloat())
@@ -421,11 +432,18 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     private var badgeNumber = 0
     private var isShowPoint = false
     private var badgeTextColor = Color.WHITE
+    private var tabPaddingTop = 0
+    private var tabPaddingBottom = 0
 
 
     init {
       if (padding == 0f) padding = dp2px(5f, context)
       if (textSize == 0f) textSize = sp2px(12f, context)
+    }
+
+    fun tabPadding(top: Int, bottom: Int) = apply {
+      this.tabPaddingTop = top
+      this.tabPaddingBottom = bottom
     }
 
     fun text(text: String) =
@@ -519,7 +537,9 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         badgeBackgroundColor = badgeBackgroundColor,
         badgeNumber = badgeNumber,
         isShowPoint = isShowPoint,
-        badgeTextColor = badgeTextColor)
+        badgeTextColor = badgeTextColor,
+        tabPaddingTop = tabPaddingTop,
+        tabPaddingBottom = tabPaddingBottom)
   }
 
 
@@ -536,6 +556,7 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     badgeBackgroundColor(badgeBackgroundColor)
     badgeNumber(badgeNumber)
     isShowPoint(isShowPoint)
+    tabPadding(tabPaddingTop, tabPaddingBottom)
   }
 }
 

@@ -2,13 +2,12 @@ package wenchieh.lu.sample
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
 import android.util.TypedValue
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import wenchieh.lu.bottombar.BottomBar
 import wenchieh.lu.bottombar.BottomTab
 import wenchieh.lu.bottombar.sample.R
@@ -24,9 +23,6 @@ class SampleActivity : AppCompatActivity() {
     val message = findViewById<TextView>(R.id.message)
     val xml = findViewById<TextView>(R.id.xml)
 
-    xml.setOnClickListener {
-      startActivity(Intent(this@SampleActivity, SampleActivityXML::class.java))
-    }
     val home = BottomTab.Builder(this).text("home")
         .iconNormal(mipmap.ic_home_unselected)
         .iconSelected(mipmap.ic_home)
@@ -62,7 +58,7 @@ class SampleActivity : AppCompatActivity() {
         .build()
 
 
-    bottomBar.setupTab(home, find, profile)
+    bottomBar.addTab(home, find, profile)
 
 
     // listeners
@@ -76,7 +72,7 @@ class SampleActivity : AppCompatActivity() {
     }
 
     // default to select the no.0
-    bottomBar.select(0)
+    bottomBar.selectItem(0)
 
 //    val newHomeTab = home.newBuilder()
 //        .iconNormalBt(normalBt)

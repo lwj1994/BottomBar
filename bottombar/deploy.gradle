@@ -1,18 +1,19 @@
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
-apply from: "keystore.gradle"
 ext {
   groupId = 'me.wenchieh'
   artifactId = "bottombar"
-  libVersion = "1.0.1"
+  libVersion = "1.0.2"
 }
 version = libVersion
 group = groupId
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
 bintray {
-  user = bintray_user
-  key = bintray_key
+  user = properties.getProperty("bintray.user")
+  key = properties.getProperty("bintray.apikey")
   configurations = ['archives']
   publish = true
   override = false
@@ -68,7 +69,7 @@ if (project.hasProperty("kotlin")) {
 task javadocJar(type: Jar, dependsOn: javadoc) {
   classifier = 'javadoc'
   from javadoc.destinationDir
-//  options.encoding = 'UTF-8'
+  //  options.encoding = 'UTF-8'
 }
 
 artifacts {

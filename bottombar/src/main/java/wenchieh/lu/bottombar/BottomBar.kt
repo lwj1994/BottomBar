@@ -7,7 +7,6 @@ import android.os.Build.VERSION_CODES
 import android.os.Parcel
 import android.os.Parcelable
 import android.os.Parcelable.Creator
-import android.support.v7.widget.LinearLayoutCompat.HORIZONTAL
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
@@ -35,7 +34,7 @@ class BottomBar @JvmOverloads constructor(context: Context,
     orientation = HORIZONTAL
     post {
       if (!isSetup)
-        setupTab()
+        addTab()
     }
   }
 
@@ -57,68 +56,42 @@ class BottomBar @JvmOverloads constructor(context: Context,
     this.onReSelectedListener = onReSelectedListener
   }
 
+  private fun applyView(view: BottomTab?) =
+      view?.apply {
+        layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT).apply {
+          weight = 1f
+        }
+        if (id == View.NO_ID)
+          id = if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
+            View.generateViewId()
+          } else {
+            generateViewIdV16()
+          }
+      }
+
   /**
    * init BottomTab
    */
-  fun setupTab(padding: Float = 0f, textColorNormal: Int = 0, textColorSelected: Int = 0,
-      vararg tabs: BottomTab) {
-    fun applyView(view: BottomTab?) =
-        view?.apply {
-          layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT).apply {
-            weight = 1f
-          }
-          if (padding != 0f)
-            this.padding = padding
-          if (textColorNormal != 0)
-            this.textColorNormal = textColorNormal
-          if (textColorSelected != 0)
-            this.textColorSelected = textColorSelected
-
-          if (id == View.NO_ID)
-            id = if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
-              View.generateViewId()
-            } else {
-              generateViewIdV16()
-            }
-        }
-
-    // add view in xml
-    if (tabs.isEmpty()) {
-      for (i in 0 until childCount) {
-        val view = getChildAt(i) as? BottomTab ?: return
-        applyView(view)
-        view.setOnClickListener {
-          triggerListener(i)
-        }
+  fun addTab(vararg tabs: BottomTab) {
+    for (i in tabs.indices) {
+      val tab = applyView(tabs[i])
+      addViewInLayout(tab, -1, tab?.layoutParams, true)
+      tabs[i].setOnClickListener {
+        selectItem(tabs, i)
       }
     }
-    // add view in code
-    else {
-      for (i in tabs.indices) {
-        val tab = applyView(tabs[i])
-//        addView(tab)
-        addViewInLayout(tab, -1, tab?.layoutParams, true)
-        tabs[i].setOnClickListener {
-          triggerListener(tabs, i)
-        }
-      }
-    }
+
     isSetup = true
     mCurrentIndex = 0
     currentTab().isSelected = true
     requestLayout()
   }
 
-  fun setupTab(vararg tabs: BottomTab) {
-    setupTab(0f, 0, 0, *tabs)
-  }
-
-
   /**
    * change positions and trigger listener
    * @param toIndex the next position to go
    */
-  private fun triggerListener(tabs: Array<out BottomTab>, toIndex: Int) {
+  private fun selectItem(tabs: Array<out BottomTab>, toIndex: Int) {
     if (tabs.isEmpty()) return
     if (mCurrentIndex == toIndex && mPreviousIndex != -1) {
       onReSelectedListener(mCurrentIndex)
@@ -133,7 +106,7 @@ class BottomBar @JvmOverloads constructor(context: Context,
    * change positions and trigger listener
    * @param toIndex the next position to go
    */
-  private fun triggerListener(toIndex: Int) {
+  fun selectItem(toIndex: Int) {
     if (childCount == 0) return
     if (mCurrentIndex == toIndex && mPreviousIndex != -1) {
       onReSelectedListener(mCurrentIndex)
@@ -157,8 +130,8 @@ class BottomBar @JvmOverloads constructor(context: Context,
   /**
    * save some state
    */
-  override fun onSaveInstanceState(): Parcelable {
-    return SavedState(super.onSaveInstanceState()).apply {
+  override fun onSaveInstanceState(): Parcelable? {
+    return SavedState(super.onSaveInstanceState() ?: return null).apply {
       preIndex = mPreviousIndex
       curIndex = mCurrentIndex
     }
@@ -217,18 +190,16 @@ class BottomBar @JvmOverloads constructor(context: Context,
     }
   }
 
-  fun performClick(index: Int) {
+  /**
+   * just select ui
+   */
+  fun setSelectState(index: Int) {
     post {
-      getChildAt(index)?.performClick()
-    }
-  }
-
-
-  fun select(index: Int) {
-    mPreviousIndex = mCurrentIndex
-    mCurrentIndex = index
-    for (i in 0 until childCount) {
-      getTab(i).isSelected = i == index
+      mPreviousIndex = mCurrentIndex
+      mCurrentIndex = index
+      for (i in 0 until childCount) {
+        getTab(i).isSelected = i == index
+      }
     }
   }
 
@@ -274,6 +245,7 @@ class BottomBar @JvmOverloads constructor(context: Context,
   }
 
   fun currentPosition() = mCurrentIndex
+  fun prePosition() = mPreviousIndex
 
   fun currentTab() = getChildAt(mCurrentIndex) as BottomTab
 
