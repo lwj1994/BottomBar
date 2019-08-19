@@ -32,10 +32,6 @@ class BottomBar @JvmOverloads constructor(context: Context,
 
   init {
     orientation = HORIZONTAL
-    post {
-      if (!isSetup)
-        addTab()
-    }
   }
 
   /**
@@ -56,8 +52,8 @@ class BottomBar @JvmOverloads constructor(context: Context,
     this.onReSelectedListener = onReSelectedListener
   }
 
-  private fun applyView(view: BottomTab?) =
-      view?.apply {
+  private fun <T> applyView(view: T) where T : IBottomTab, T : View =
+      view.apply {
         layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT).apply {
           weight = 1f
         }
@@ -72,10 +68,10 @@ class BottomBar @JvmOverloads constructor(context: Context,
   /**
    * init BottomTab
    */
-  fun addTab(vararg tabs: BottomTab) {
+  fun <T> addTab(vararg tabs: T) where T : IBottomTab, T : View {
     for (i in tabs.indices) {
       val tab = applyView(tabs[i])
-      addViewInLayout(tab, -1, tab?.layoutParams, true)
+      addViewInLayout(tab, -1, tab.layoutParams, true)
       tabs[i].setOnClickListener {
         selectItem(tabs, i)
       }
@@ -91,7 +87,7 @@ class BottomBar @JvmOverloads constructor(context: Context,
    * change positions and trigger listener
    * @param toIndex the next position to go
    */
-  private fun selectItem(tabs: Array<out BottomTab>, toIndex: Int) {
+  private fun <T> selectItem(tabs: Array<out T>, toIndex: Int) where T : IBottomTab, T : View {
     if (tabs.isEmpty()) return
     if (mCurrentIndex == toIndex && mPreviousIndex != -1) {
       onReSelectedListener(mCurrentIndex)

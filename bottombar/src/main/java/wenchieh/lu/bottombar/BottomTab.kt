@@ -48,7 +48,7 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     var iconSelectedBt: Bitmap? = null,
     var tabPaddingTop: Int = 0,
     var tabPaddingBottom: Int = 0,
-    var badgeTextColor: Int = Color.WHITE) : View(context, attrs, defStyleAttr) {
+    var badgeTextColor: Int = Color.WHITE) : View(context, attrs, defStyleAttr),IBottomTab {
 
   private var mAlpha = 0
   private lateinit var mIconPaint: Paint
