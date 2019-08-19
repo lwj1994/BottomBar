@@ -29,6 +29,7 @@ class BottomBar @JvmOverloads constructor(context: Context,
   private var mCurrentIndex = -1
   private var mPreviousIndex = -1
   private var isSetup = false
+  private val tabList = arrayListOf<IBottomTab>()
 
   init {
     orientation = HORIZONTAL
@@ -69,33 +70,33 @@ class BottomBar @JvmOverloads constructor(context: Context,
    * init BottomTab
    */
   fun <T> addTab(vararg tabs: T) where T : IBottomTab, T : View {
+    tabList.addAll(tabs)
     for (i in tabs.indices) {
       val tab = applyView(tabs[i])
       addViewInLayout(tab, -1, tab.layoutParams, true)
       tabs[i].setOnClickListener {
-        selectItem(tabs, i)
+        selectItem(i)
       }
     }
 
     isSetup = true
     mCurrentIndex = 0
-    currentTab().isSelected = true
+    currentTab().setSelected(true)
     requestLayout()
   }
 
-  /**
-   * change positions and trigger listener
-   * @param toIndex the next position to go
-   */
-  private fun <T> selectItem(tabs: Array<out T>, toIndex: Int) where T : IBottomTab, T : View {
-    if (tabs.isEmpty()) return
-    if (mCurrentIndex == toIndex && mPreviousIndex != -1) {
-      onReSelectedListener(mCurrentIndex)
-      return
+  fun <T> addTab(tab: T) where T : IBottomTab, T : View {
+    tabList.add(tab)
+    val item = applyView(tab)
+    item.setOnClickListener {
+      selectItem(tabList.lastIndex)
     }
-    onSelected(mCurrentIndex, toIndex, onSelectedListener)
-    mPreviousIndex = mCurrentIndex
-    mCurrentIndex = toIndex
+    addView(item)
+  }
+
+  override fun removeAllViews() {
+    super.removeAllViews()
+    tabList.clear()
   }
 
   /**
@@ -194,7 +195,7 @@ class BottomBar @JvmOverloads constructor(context: Context,
       mPreviousIndex = mCurrentIndex
       mCurrentIndex = index
       for (i in 0 until childCount) {
-        getTab(i).isSelected = i == index
+        getTab(i).setSelected(i == index)
       }
     }
   }
@@ -243,13 +244,13 @@ class BottomBar @JvmOverloads constructor(context: Context,
   fun currentPosition() = mCurrentIndex
   fun prePosition() = mPreviousIndex
 
-  fun currentTab() = getChildAt(mCurrentIndex) as BottomTab
+  fun currentTab() = getChildAt(mCurrentIndex) as IBottomTab
 
   fun setCurrentPosition(position: Int) {
     mCurrentIndex = position
   }
 
-  fun getTab(position: Int) = getChildAt(position) as BottomTab
+  fun getTab(position: Int) = getChildAt(position) as IBottomTab
 
   companion object {
     private const val TAG = "BottomBar"

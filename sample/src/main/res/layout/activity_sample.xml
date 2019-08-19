@@ -30,10 +30,8 @@
   <wenchieh.lu.bottombar.BottomBar
       android:id="@+id/bottomBar"
       android:layout_width="match_parent"
-      android:layout_height="50dp"
+      android:layout_height="48dp"
       android:layout_gravity="bottom"
-      android:paddingTop="5dp"
-      android:paddingBottom="5dp"
       android:background="?android:attr/windowBackground"
       />
 </FrameLayout>

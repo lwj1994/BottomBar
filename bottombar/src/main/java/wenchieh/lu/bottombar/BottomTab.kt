@@ -20,6 +20,7 @@ import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.Log
 import android.util.TypedValue
+import android.view.Gravity
 import android.view.View
 import androidx.annotation.DrawableRes
 import androidx.annotation.Px
@@ -31,6 +32,7 @@ import androidx.annotation.Px
  * rewrite in kotlin from:
  *                    https://github.com/yingLanNull/AlphaTabsIndicator/blob/6ccff9e1a226755226559c61b593f1a41230813e/library/src/main/java/com/yinglan/alphatabs/BottomTab.java
  *
+ * @param tabPaddingTop
  */
 class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
@@ -44,11 +46,13 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     var badgeBackgroundColor: Int = Color.RED,
     var badgeNumber: Int = 0,
     var isShowPoint: Boolean = false,
+    var badgeGravity: Int = Gravity.TOP or Gravity.END,
     var iconNormalBt: Bitmap? = null,
     var iconSelectedBt: Bitmap? = null,
     var tabPaddingTop: Int = 0,
     var tabPaddingBottom: Int = 0,
-    var badgeTextColor: Int = Color.WHITE) : View(context, attrs, defStyleAttr),IBottomTab {
+    var badgeTextColor: Int = Color.WHITE
+) : View(context, attrs, defStyleAttr), IBottomTab {
 
   private var mAlpha = 0
   private lateinit var mIconPaint: Paint
@@ -72,11 +76,9 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
       iconSelectedBt = if (iconSelected == 0) null else getDrawable(
           iconSelected)?.toBitmap()
     }
-    if (padding == 0f) padding = dp2px(5f)
     if (textSize == 0f) textSize = sp2px(12f)
 
     initDrawTools()
-    setPadding(0,tabPaddingTop,0,tabPaddingBottom)
     val typeValue = TypedValue()
     context.theme
         .resolveAttribute(android.R.attr.selectableItemBackground, typeValue, true)
@@ -126,14 +128,13 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
 
   override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
     super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-    Log.d(TAG, "onMeasure")
 
     val availableWidth = measuredWidth - paddingLeft - paddingRight
-    val availableHeight: Int = (measuredHeight - paddingTop - paddingBottom - mTextBound.height() - padding).toInt()
+    val availableHeight: Int = (measuredHeight - paddingTop - paddingBottom - tabPaddingTop - tabPaddingBottom - mTextBound.height() - padding).toInt()
 
 
-    mIconAvailableRect.set(paddingLeft, paddingTop, paddingLeft + availableWidth,
-        paddingTop + availableHeight)
+    mIconAvailableRect.set(paddingLeft, paddingTop + tabPaddingTop, paddingLeft + availableWidth,
+        paddingTop + tabPaddingTop + availableHeight)
 
     val textLeft = paddingLeft + (availableWidth - mTextBound.width()) / 2
     val textTop = mIconAvailableRect.bottom + padding.toInt()
@@ -192,17 +193,27 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     i = if (i >= j) j else i
 
 
-    val left = measuredWidth / 10 * 6f
-    val top = tabPaddingTop.toFloat()
     // if showPoint, don't show number
     if (isShowPoint) {
-      i = if (i > 10) 10 else i
-      val width = dp2px(i.toFloat())
-      badgeRF.set(left, top, left + width, top + width)
+      if (badgeGravity == Gravity.BOTTOM) {
+        val width = dp2px(5F)
+        val mleft = measuredWidth / 2 - width / 2
+        val mtop = measuredHeight - dp2px(10F)
+        badgeRF.set(mleft, mtop, mleft + width, mtop + width)
+      } else {
+        i = if (i > 10) 10 else i
+        val width = dp2px(i.toFloat())
+        val left = measuredWidth / 10 * 6f
+        val top = tabPaddingTop.toFloat() + paddingTop
+        badgeRF.set(left, top, left + width, top + width)
+      }
       canvas.drawOval(badgeRF, badgeBgPaint)
       return
     }
 
+
+    val left = measuredWidth / 10 * 6f
+    val top = tabPaddingTop.toFloat() + paddingTop
     if (badgeNumber > 0) {
       badgeTextPaint.apply {
         textSize = dp2px(if (i / 1.5f == 0f) 5f else i / 1.5f)
@@ -230,7 +241,7 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
       badgeRF.set(0f, 0f, width.toFloat(), height.toFloat())
       badgeCanvas.apply {
         setBitmap(bitmap)
-        drawRoundRect(badgeRF, 50f, 50f, badgeBgPaint) //画椭圆
+        drawRoundRect(badgeRF, dp2px(25F), dp2px(25F), badgeBgPaint) //画椭圆
       }
 
       val fontMetrics = badgeTextPaint.fontMetrics
@@ -266,7 +277,7 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     set(left, top, right, bottom)
   }
 
-  fun showBadgePoint(show: Boolean) {
+  override fun showBadgePoint(show: Boolean) {
     if (show == isShowPoint) {
       return
     }
@@ -296,6 +307,9 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     invalidate()
   }
 
+  override fun isSelected(): Boolean {
+    return super.isSelected()
+  }
 
   override fun onSaveInstanceState(): Parcelable {
     Log.d(TAG, "onSaveInstanceState")
@@ -434,6 +448,7 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     private var badgeTextColor = Color.WHITE
     private var tabPaddingTop = 0
     private var tabPaddingBottom = 0
+    private var badgeGravity = Gravity.TOP or Gravity.END
 
 
     init {
@@ -524,6 +539,11 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
           this.badgeTextColor = color
         }
 
+    fun badgeGravity(gravity: Int) =
+        apply {
+          this.badgeGravity = gravity
+        }
+
     fun build() = BottomTab(context,
         iconNormal = iconNormal,
         iconSelected = iconSelected,
@@ -539,7 +559,8 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         isShowPoint = isShowPoint,
         badgeTextColor = badgeTextColor,
         tabPaddingTop = tabPaddingTop,
-        tabPaddingBottom = tabPaddingBottom)
+        tabPaddingBottom = tabPaddingBottom,
+        badgeGravity = badgeGravity)
   }
 
 
@@ -557,6 +578,7 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     badgeNumber(badgeNumber)
     isShowPoint(isShowPoint)
     tabPadding(tabPaddingTop, tabPaddingBottom)
+    badgeGravity(badgeGravity)
   }
 }
 

@@ -5,6 +5,7 @@ import android.app.Activity
 import android.graphics.Color
 import android.os.Bundle
 import android.util.TypedValue
+import android.view.Gravity
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -12,6 +13,7 @@ import wenchieh.lu.bottombar.BottomBar
 import wenchieh.lu.bottombar.BottomTab
 import wenchieh.lu.bottombar.sample.R
 import wenchieh.lu.bottombar.sample.R.mipmap
+
 
 class SampleActivity : AppCompatActivity() {
 
@@ -26,11 +28,11 @@ class SampleActivity : AppCompatActivity() {
     val home = BottomTab.Builder(this).text("home")
         .iconNormal(mipmap.ic_home_unselected)
         .iconSelected(mipmap.ic_home)
-        .padding(dp2px(5f))
         .textColorNormal(color(android.R.color.black))
         .textColorSelected(color(android.R.color.holo_red_dark))
         .textSize(dp2px(15f))
         .badgeNumber(99)
+        .tabPadding(dp2px(11F).toInt(), dp2px(11F).toInt())
         .badgeTextColor(Color.RED)
         .badgeBackgroundColor(Color.CYAN)
         .build()
@@ -44,6 +46,8 @@ class SampleActivity : AppCompatActivity() {
         .textColorSelected(color(android.R.color.holo_red_dark))
         .isShowPoint(true)
         .textSize(dp2px(15f))
+        .tabPadding(dp2px(11F).toInt(), dp2px(15F).toInt())
+        .badgeGravity(Gravity.BOTTOM)
         .badgeBackgroundColor(Color.RED)
         .build()
 
@@ -58,7 +62,8 @@ class SampleActivity : AppCompatActivity() {
         .build()
 
 
-    bottomBar.addTab(home, find, profile)
+    bottomBar.addTab(home, profile)
+    bottomBar.addTab(find)
 
 
     // listeners

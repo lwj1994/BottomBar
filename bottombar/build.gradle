@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 ext {
-  libVersion = "1.0.2"
+  libVersion = "1.0.3"
   groupId = "me.wenchieh"
   artifactId = "bottombar"
   pkg_name = "bottombar"
