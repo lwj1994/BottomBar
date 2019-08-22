@@ -62,8 +62,10 @@ class SampleActivity : AppCompatActivity() {
         .build()
 
 
+
     bottomBar.addTab(home, profile)
     bottomBar.addTab(find)
+
 
 
     // listeners
