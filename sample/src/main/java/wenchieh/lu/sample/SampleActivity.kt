@@ -26,7 +26,7 @@ class SampleActivity : AppCompatActivity() {
     val xml = findViewById<TextView>(R.id.xml)
 
     val home = BottomTab.Builder(this).text("home")
-        .iconNormal(mipmap.ic_home_unselected)
+        .iconNormal(-1)
         .iconSelected(mipmap.ic_home)
         .textColorNormal(color(android.R.color.black))
         .textColorSelected(color(android.R.color.holo_red_dark))

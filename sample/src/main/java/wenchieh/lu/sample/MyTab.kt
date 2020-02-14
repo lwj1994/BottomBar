@@ -9,7 +9,6 @@ import wenchieh.lu.bottombar.IBottomTab
  */
 class MyTab(context: Context):View(context),IBottomTab {
   override fun showBadgePoint(show: Boolean) {
-
   }
 
 

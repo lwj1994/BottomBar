@@ -1,6 +1,7 @@
 package wenchieh.lu.bottombar
 
 import android.content.Context
+import android.content.res.Resources.NotFoundException
 import android.graphics.Bitmap
 import android.graphics.Bitmap.Config
 import android.graphics.Canvas
@@ -10,6 +11,7 @@ import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
@@ -34,24 +36,25 @@ import androidx.annotation.Px
  *
  * @param tabPaddingTop
  */
-class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0,
-    var text: String = "",
-    var iconNormal: Int = 0,
-    var iconSelected: Int = 0,
-    var padding: Float = 0f,
-    var textSize: Float = 0f,
-    var textColorNormal: Int = Color.BLACK,
-    var textColorSelected: Int = Color.RED,
-    var badgeBackgroundColor: Int = Color.RED,
-    var badgeNumber: Int = 0,
-    var isShowPoint: Boolean = false,
-    var badgeGravity: Int = Gravity.TOP or Gravity.END,
-    var iconNormalBt: Bitmap? = null,
-    var iconSelectedBt: Bitmap? = null,
-    var tabPaddingTop: Int = 0,
-    var tabPaddingBottom: Int = 0,
-    var badgeTextColor: Int = Color.WHITE
+class BottomTab @JvmOverloads constructor(
+  context: Context, attrs: AttributeSet? = null,
+  defStyleAttr: Int = 0,
+  var text: String = "",
+  var iconNormal: Int = 0,
+  var iconSelected: Int = 0,
+  var padding: Float = 0f,
+  var textSize: Float = 0f,
+  var textColorNormal: Int = Color.BLACK,
+  var textColorSelected: Int = Color.RED,
+  var badgeBackgroundColor: Int = Color.RED,
+  var badgeNumber: Int = 0,
+  var isShowPoint: Boolean = false,
+  var badgeGravity: Int = Gravity.TOP or Gravity.END,
+  var iconNormalBt: Bitmap? = null,
+  var iconSelectedBt: Bitmap? = null,
+  var tabPaddingTop: Int = 0,
+  var tabPaddingBottom: Int = 0,
+  var badgeTextColor: Int = Color.WHITE
 ) : View(context, attrs, defStyleAttr), IBottomTab {
 
   private var mAlpha = 0
@@ -232,7 +235,7 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
           width = dp2px((i + 5).toFloat()).toInt()
           bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         }
-        else -> {
+        else               -> {
           width = dp2px((i + 8).toFloat()).toInt()
           bitmap = Bitmap.createBitmap(width, width, Bitmap.Config.ARGB_8888)
         }
@@ -394,9 +397,9 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
   }
 
   private fun Drawable.toBitmap(
-      @Px width: Int = intrinsicWidth,
-      @Px height: Int = intrinsicHeight,
-      config: Config? = null
+    @Px width: Int = intrinsicWidth,
+    @Px height: Int = intrinsicHeight,
+    config: Config? = null
   ): Bitmap {
     if (this is BitmapDrawable) {
       if (config == null || bitmap.config == config) {
@@ -414,9 +417,10 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     val oldRight = bounds.right
     val oldBottom = bounds.bottom
 
-
-    val bitmap = Bitmap.createBitmap(width, height, config ?: Config.ARGB_8888)
-    setBounds(0, 0, width, height)
+    val w = if (width == 0) width else 10
+    val h = if (height == 0) height else 10
+    val bitmap = Bitmap.createBitmap(w, h, config ?: Config.ARGB_8888)
+    setBounds(0, 0, w, h)
     draw(Canvas(bitmap))
 
     setBounds(oldLeft, oldTop, oldRight, oldBottom)
@@ -424,12 +428,17 @@ class BottomTab @JvmOverloads constructor(context: Context, attrs: AttributeSet?
   }
 
 
-  private fun getDrawable(@DrawableRes drawableRes: Int): Drawable? =
+  private fun getDrawable(@DrawableRes drawableRes: Int): Drawable? {
+    return try {
       if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
         context.getDrawable(drawableRes)
       } else {
         context.resources.getDrawable(drawableRes)
       }
+    } catch (e: NotFoundException) {
+      ColorDrawable(Color.WHITE)
+    }
+  }
 
 
   class Builder(private val context: Context) {
