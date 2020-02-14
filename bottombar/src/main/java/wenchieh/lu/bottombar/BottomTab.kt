@@ -417,8 +417,8 @@ class BottomTab @JvmOverloads constructor(
     val oldRight = bounds.right
     val oldBottom = bounds.bottom
 
-    val w = if (width == 0) width else 10
-    val h = if (height == 0) height else 10
+    val w = if (width <= 0) 10 else width
+    val h = if (height <= 0) 10 else height
     val bitmap = Bitmap.createBitmap(w, h, config ?: Config.ARGB_8888)
     setBounds(0, 0, w, h)
     draw(Canvas(bitmap))
