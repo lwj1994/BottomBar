@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.widget.TextView
@@ -69,9 +70,9 @@ class SampleActivity : AppCompatActivity() {
 
 
     // listeners
-    bottomBar.setOnSelectedListener { pre, cur ->
+    bottomBar.setOnSelectedListener { pre, cur ,isManual->
       message.text = (bottomBar.getChildAt(
-          cur) as BottomTab).text + "\n prePosition = $pre, select curPosition = $cur"
+          cur) as BottomTab).text + "\n prePosition = $pre, select curPosition = $cur isManual = $isManual"
     }
 
     bottomBar.setOnReSelectedListener {

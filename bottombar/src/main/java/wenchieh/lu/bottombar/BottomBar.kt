@@ -19,11 +19,12 @@ import java.util.concurrent.atomic.AtomicInteger
  *
  */
 @TargetApi(VERSION_CODES.HONEYCOMB)
-class BottomBar @JvmOverloads constructor(context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0,
-    private var onSelectedListener: (prePosition: Int, position: Int) -> Unit = { _, _ -> },
-    private var onReSelectedListener: (position: Int) -> Unit = { }
+class BottomBar @JvmOverloads constructor(
+  context: Context,
+  attrs: AttributeSet? = null,
+  defStyleAttr: Int = 0,
+  private var onSelectedListener: (prePosition: Int, position: Int, isManual: Boolean) -> Unit = { _, _, _ -> },
+  private var onReSelectedListener: (position: Int) -> Unit = { }
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
   private var mCurrentIndex = -1
@@ -40,7 +41,7 @@ class BottomBar @JvmOverloads constructor(context: Context,
    * @param prePosition the position of selected button previously
    * @param position the position of selected button just now
    */
-  fun setOnSelectedListener(onSelectedListener: (prePosition: Int, position: Int) -> Unit) {
+  fun setOnSelectedListener(onSelectedListener: (prePosition: Int, position: Int, isManual: Boolean) -> Unit) {
     this.onSelectedListener = onSelectedListener
   }
 
@@ -49,7 +50,7 @@ class BottomBar @JvmOverloads constructor(context: Context,
    * @param position the position of reSelected button just now
    */
   fun setOnReSelectedListener(
-      onReSelectedListener: (position: Int) -> Unit) {
+    onReSelectedListener: (position: Int) -> Unit) {
     this.onReSelectedListener = onReSelectedListener
   }
 
@@ -75,7 +76,7 @@ class BottomBar @JvmOverloads constructor(context: Context,
       val tab = applyView(tabs[i])
       addViewInLayout(tab, -1, tab.layoutParams, true)
       tabs[i].setOnClickListener {
-        selectItem(i)
+        selectItem(i,true)
       }
     }
 
@@ -89,7 +90,7 @@ class BottomBar @JvmOverloads constructor(context: Context,
     tabList.add(tab)
     val item = applyView(tab)
     item.setOnClickListener {
-      selectItem(tabList.lastIndex)
+      selectItem(tabList.lastIndex,true)
     }
     addView(item)
   }
@@ -102,26 +103,34 @@ class BottomBar @JvmOverloads constructor(context: Context,
   /**
    * change positions and trigger listener
    * @param toIndex the next position to go
+   * @param isManual true is select by user
    */
-  fun selectItem(toIndex: Int) {
+  fun selectItem(toIndex: Int,isManual: Boolean = false) {
     if (childCount == 0) return
     if (mCurrentIndex == toIndex && mPreviousIndex != -1) {
-      onReSelectedListener(mCurrentIndex)
+      if (isManual){
+        onReSelectedListener(mCurrentIndex)
+      }
       return
     }
-    onSelected(mCurrentIndex, toIndex, onSelectedListener)
+    onSelected(mCurrentIndex, toIndex, isManual, onSelectedListener)
     mPreviousIndex = mCurrentIndex
     mCurrentIndex = toIndex
   }
 
-  private fun onSelected(preIndex: Int, curIndex: Int,
-      onSelectedListener: (prePosition: Int, position: Int) -> Unit) {
+  /**
+   * @param preIndex
+   * @param curIndex
+   * @param isManual
+   */
+  private fun onSelected(
+    preIndex: Int, curIndex: Int, isManual: Boolean, onSelectedListener: (prePosition: Int, position: Int, isManual: Boolean) -> Unit) {
 
     for (i in 0 until childCount) {
       getChildAt(i).isSelected = i == curIndex
     }
 
-    onSelectedListener(preIndex, curIndex)
+    onSelectedListener(preIndex, curIndex, isManual)
   }
 
   /**
@@ -150,7 +159,7 @@ class BottomBar @JvmOverloads constructor(context: Context,
     mPreviousIndex = savedState.preIndex
     mCurrentIndex = savedState.curIndex
     post {
-      onSelected(mPreviousIndex, mCurrentIndex, onSelectedListener)
+      onSelected(mPreviousIndex, mCurrentIndex, false, onSelectedListener)
     }
   }
 
