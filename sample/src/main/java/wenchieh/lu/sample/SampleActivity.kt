@@ -48,7 +48,8 @@ class SampleActivity : AppCompatActivity() {
         .isShowPoint(true)
         .textSize(dp2px(15f))
         .tabPadding(dp2px(11F).toInt(), dp2px(15F).toInt())
-        .badgeGravity(Gravity.BOTTOM)
+//        .badgeGravity(Gravity.BOTTOM)
+        .badgeWidth(dp2px(5F))
         .badgeBackgroundColor(Color.RED)
         .build()
 

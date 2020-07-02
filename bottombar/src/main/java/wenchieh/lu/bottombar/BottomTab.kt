@@ -37,7 +37,8 @@ import androidx.annotation.Px
  * @param tabPaddingTop
  */
 class BottomTab @JvmOverloads constructor(
-  context: Context, attrs: AttributeSet? = null,
+  context: Context,
+  attrs: AttributeSet? = null,
   defStyleAttr: Int = 0,
   var text: String = "",
   var iconNormal: Int = 0,
@@ -54,7 +55,8 @@ class BottomTab @JvmOverloads constructor(
   var iconSelectedBt: Bitmap? = null,
   var tabPaddingTop: Int = 0,
   var tabPaddingBottom: Int = 0,
-  var badgeTextColor: Int = Color.WHITE
+  var badgeTextColor: Int = Color.WHITE,
+  var badgeWidth: Float = -1F
 ) : View(context, attrs, defStyleAttr), IBottomTab {
 
   private var mAlpha = 0
@@ -63,7 +65,6 @@ class BottomTab @JvmOverloads constructor(
   private lateinit var mIconAvailableRect: Rect
   private lateinit var mIconDrawRect: Rect
   private lateinit var mTextBound: Rect
-
 
   private lateinit var badgeBgPaint: Paint
   private lateinit var badgeTextPaint: Paint
@@ -77,7 +78,8 @@ class BottomTab @JvmOverloads constructor(
     }
     if (iconSelectedBt == null) {
       iconSelectedBt = if (iconSelected == 0) null else getDrawable(
-          iconSelected)?.toBitmap()
+          iconSelected
+      )?.toBitmap()
     }
     if (textSize == 0f) textSize = sp2px(12f)
 
@@ -129,24 +131,38 @@ class BottomTab @JvmOverloads constructor(
     badgeRF = RectF()
   }
 
-  override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+  override fun onMeasure(
+    widthMeasureSpec: Int,
+    heightMeasureSpec: Int
+  ) {
     super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
     val availableWidth = measuredWidth - paddingLeft - paddingRight
-    val availableHeight: Int = (measuredHeight - paddingTop - paddingBottom - tabPaddingTop - tabPaddingBottom - mTextBound.height() - padding).toInt()
+    val availableHeight: Int =
+      (measuredHeight - paddingTop - paddingBottom - tabPaddingTop - tabPaddingBottom - mTextBound.height() - padding).toInt()
 
 
-    mIconAvailableRect.set(paddingLeft, paddingTop + tabPaddingTop, paddingLeft + availableWidth,
-        paddingTop + tabPaddingTop + availableHeight)
+    mIconAvailableRect.set(
+        paddingLeft, paddingTop + tabPaddingTop, paddingLeft + availableWidth,
+        paddingTop + tabPaddingTop + availableHeight
+    )
 
     val textLeft = paddingLeft + (availableWidth - mTextBound.width()) / 2
     val textTop = mIconAvailableRect.bottom + padding.toInt()
-    mTextBound.set(textLeft, textTop, textLeft + mTextBound.width(),
-        textTop + mTextBound.height())
+    mTextBound.set(
+        textLeft, textTop, textLeft + mTextBound.width(),
+        textTop + mTextBound.height()
+    )
 
   }
 
-  override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+  override fun onLayout(
+    changed: Boolean,
+    left: Int,
+    top: Int,
+    right: Int,
+    bottom: Int
+  ) {
     super.onLayout(changed, left, top, right, bottom)
     Log.d(TAG, "onLayout")
   }
@@ -156,14 +172,16 @@ class BottomTab @JvmOverloads constructor(
 
     // draw icon
     mIconAvailableRect.availableToDrawRect(
-        iconNormalBt ?: throw IllegalArgumentException("you must set iconNormal"))
+        iconNormalBt ?: throw IllegalArgumentException("you must set iconNormal")
+    )
     mIconPaint.alpha = 255 - mAlpha
-    canvas.drawBitmap(iconNormalBt, null, mIconAvailableRect, mIconPaint)
+    canvas.drawBitmap(iconNormalBt!!, null, mIconAvailableRect, mIconPaint)
 
     mIconAvailableRect.availableToDrawRect(
-        iconSelectedBt ?: throw IllegalArgumentException("you must set iconSelected"))
+        iconSelectedBt ?: throw IllegalArgumentException("you must set iconSelected")
+    )
     mIconPaint.alpha = mAlpha
-    canvas.drawBitmap(iconSelectedBt, null, mIconAvailableRect, mIconPaint)
+    canvas.drawBitmap(iconSelectedBt!!, null, mIconAvailableRect, mIconPaint)
 
     // draw text
     // text's real height  = mTextBound.height() + mFmi.bottom
@@ -172,15 +190,19 @@ class BottomTab @JvmOverloads constructor(
         color = textColorNormal
         alpha = 255 - mAlpha
       }
-      canvas.drawText(text, mTextBound.left.toFloat(),
-          (mTextBound.bottom - mTextPaint.fontMetricsInt.bottom / 2).toFloat(), mTextPaint)
+      canvas.drawText(
+          text, mTextBound.left.toFloat(),
+          (mTextBound.bottom - mTextPaint.fontMetricsInt.bottom / 2).toFloat(), mTextPaint
+      )
 
       mTextPaint.apply {
         color = textColorSelected
         alpha = mAlpha
       }
-      canvas.drawText(text, mTextBound.left.toFloat(),
-          (mTextBound.bottom - mTextPaint.fontMetricsInt.bottom / 2).toFloat(), mTextPaint)
+      canvas.drawText(
+          text, mTextBound.left.toFloat(),
+          (mTextBound.bottom - mTextPaint.fontMetricsInt.bottom / 2).toFloat(), mTextPaint
+      )
     }
 
     // draw badge
@@ -195,25 +217,22 @@ class BottomTab @JvmOverloads constructor(
     val j = measuredHeight / 9
     i = if (i >= j) j else i
 
-
     // if showPoint, don't show number
     if (isShowPoint) {
+      val width = if (badgeWidth == -1F) dp2px(5F) else badgeWidth
       if (badgeGravity == Gravity.BOTTOM) {
-        val width = dp2px(5F)
         val mleft = measuredWidth / 2 - width / 2
         val mtop = measuredHeight - dp2px(10F)
         badgeRF.set(mleft, mtop, mleft + width, mtop + width)
       } else {
-        i = if (i > 10) 10 else i
-        val width = dp2px(i.toFloat())
-        val left = measuredWidth / 10 * 6f
+        val left = (measuredWidth - mIconAvailableRect.width()) / 2 + mIconAvailableRect.width()
+        Log.d(TAG,"mIconAvailableRect.w = ${mIconAvailableRect.width()}")
         val top = tabPaddingTop.toFloat() + paddingTop
-        badgeRF.set(left, top, left + width, top + width)
+        badgeRF.set(left.toFloat(), top, left + width, top + width)
       }
       canvas.drawOval(badgeRF, badgeBgPaint)
       return
     }
-
 
     val left = measuredWidth / 10 * 6f
     val top = tabPaddingTop.toFloat() + paddingTop
@@ -235,7 +254,7 @@ class BottomTab @JvmOverloads constructor(
           width = dp2px((i + 5).toFloat()).toInt()
           bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         }
-        else               -> {
+        else -> {
           width = dp2px((i + 8).toFloat()).toInt()
           bitmap = Bitmap.createBitmap(width, width, Bitmap.Config.ARGB_8888)
         }
@@ -258,10 +277,10 @@ class BottomTab @JvmOverloads constructor(
   }
 
   private fun dp2px(value: Float) =
-      dp2px(value, context)
+    dp2px(value, context)
 
   private fun sp2px(value: Float) =
-      sp2px(value, context)
+    sp2px(value, context)
 
   private fun Rect.availableToDrawRect(bitmap: Bitmap) {
     var dx = 0f
@@ -278,6 +297,7 @@ class BottomTab @JvmOverloads constructor(
     val right = (right - dx + 0.5f).toInt()
     val bottom = (bottom - dy + 0.5f).toInt()
     set(left, top, right, bottom)
+    Log.d(TAG,"w = ${width()}, h = ${height()}")
   }
 
   override fun showBadgePoint(show: Boolean) {
@@ -326,7 +346,6 @@ class BottomTab @JvmOverloads constructor(
     }
   }
 
-
   override fun onRestoreInstanceState(state: Parcelable?) {
     Log.d(TAG, "onRestoreInstanceState")
     if (state == null || state !is SavedState) {
@@ -367,7 +386,10 @@ class BottomTab @JvmOverloads constructor(
       isSelected = parcel.readByte() != 0.toByte()
     }
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
+    override fun writeToParcel(
+      parcel: Parcel,
+      flags: Int
+    ) {
       super.writeToParcel(parcel, flags)
       parcel.writeString(text)
       parcel.writeFloat(padding)
@@ -427,7 +449,6 @@ class BottomTab @JvmOverloads constructor(
     return bitmap
   }
 
-
   private fun getDrawable(@DrawableRes drawableRes: Int): Drawable? {
     return try {
       if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
@@ -439,7 +460,6 @@ class BottomTab @JvmOverloads constructor(
       ColorDrawable(Color.WHITE)
     }
   }
-
 
   class Builder(private val context: Context) {
     private var text: String = ""
@@ -458,102 +478,102 @@ class BottomTab @JvmOverloads constructor(
     private var tabPaddingTop = 0
     private var tabPaddingBottom = 0
     private var badgeGravity = Gravity.TOP or Gravity.END
-
+    private var badgeWidth = -1F
 
     init {
       if (padding == 0f) padding = dp2px(5f, context)
       if (textSize == 0f) textSize = sp2px(12f, context)
     }
 
-    fun tabPadding(top: Int, bottom: Int) = apply {
+    fun tabPadding(
+      top: Int,
+      bottom: Int
+    ) = apply {
       this.tabPaddingTop = top
       this.tabPaddingBottom = bottom
     }
 
     fun text(text: String) =
-        apply {
-          this.text = text
-        }
-
+      apply {
+        this.text = text
+      }
 
     fun textSize(textSize: Float) =
-        apply {
-          this.textSize = textSize
-        }
-
+      apply {
+        this.textSize = textSize
+      }
 
     fun iconNormal(iconNormal: Int) =
-        apply {
-          this.iconNormal = iconNormal
-          this.iconNormalBt = null
-        }
-
+      apply {
+        this.iconNormal = iconNormal
+        this.iconNormalBt = null
+      }
 
     fun iconSelected(iconSelected: Int) =
-        apply {
-          this.iconSelected = iconSelected
-          this.iconSelectedBt = null;
-        }
-
+      apply {
+        this.iconSelected = iconSelected
+        this.iconSelectedBt = null;
+      }
 
     fun iconNormalBt(iconNormalBt: Bitmap?) =
-        apply {
-          this.iconNormalBt = iconNormalBt
-          this.iconNormal = 0
-        }
+      apply {
+        this.iconNormalBt = iconNormalBt
+        this.iconNormal = 0
+      }
 
     fun iconSelectedBt(iconSelectedBt: Bitmap?) =
-        apply {
-          this.iconSelectedBt = iconSelectedBt
-          this.iconSelected = 0
-        }
-
+      apply {
+        this.iconSelectedBt = iconSelectedBt
+        this.iconSelected = 0
+      }
 
     fun textColorNormal(textColorNormal: Int) =
-        apply {
-          this.textColorNormal = textColorNormal
-        }
-
+      apply {
+        this.textColorNormal = textColorNormal
+      }
 
     fun textColorSelected(textColorSelected: Int) =
-        apply {
-          this.textColorSelected = textColorSelected
-        }
-
+      apply {
+        this.textColorSelected = textColorSelected
+      }
 
     fun padding(padding: Float) =
-        apply {
-          this.padding = padding
-        }
+      apply {
+        this.padding = padding
+      }
 
     fun badgeBackgroundColor(badgeBackgroundColor: Int) =
-        apply {
-          this.badgeBackgroundColor = badgeBackgroundColor
-        }
-
+      apply {
+        this.badgeBackgroundColor = badgeBackgroundColor
+      }
 
     fun badgeNumber(badgeNumber: Int) =
-        apply {
-          this.badgeNumber = badgeNumber
-        }
-
+      apply {
+        this.badgeNumber = badgeNumber
+      }
 
     fun isShowPoint(isShowPoint: Boolean) =
-        apply {
-          this.isShowPoint = isShowPoint
-        }
+      apply {
+        this.isShowPoint = isShowPoint
+      }
 
     fun badgeTextColor(color: Int) =
-        apply {
-          this.badgeTextColor = color
-        }
+      apply {
+        this.badgeTextColor = color
+      }
 
     fun badgeGravity(gravity: Int) =
-        apply {
-          this.badgeGravity = gravity
-        }
+      apply {
+        this.badgeGravity = gravity
+      }
 
-    fun build() = BottomTab(context,
+    fun badgeWidth(width: Float) =
+      apply {
+        this.badgeWidth = width
+      }
+
+    fun build() = BottomTab(
+        context,
         iconNormal = iconNormal,
         iconSelected = iconSelected,
         iconNormalBt = iconNormalBt,
@@ -569,9 +589,10 @@ class BottomTab @JvmOverloads constructor(
         badgeTextColor = badgeTextColor,
         tabPaddingTop = tabPaddingTop,
         tabPaddingBottom = tabPaddingBottom,
-        badgeGravity = badgeGravity)
+        badgeGravity = badgeGravity,
+        badgeWidth = badgeWidth
+    )
   }
-
 
   fun newBuilder() = Builder(context).apply {
     iconNormal(iconNormal)
@@ -588,12 +609,18 @@ class BottomTab @JvmOverloads constructor(
     isShowPoint(isShowPoint)
     tabPadding(tabPaddingTop, tabPaddingBottom)
     badgeGravity(badgeGravity)
+    badgeWidth(badgeWidth)
   }
 }
 
-private fun dp2px(value: Float, context: Context) =
-    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, context.resources.displayMetrics)
+private fun dp2px(
+  value: Float,
+  context: Context
+) =
+  TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, context.resources.displayMetrics)
 
-
-private fun sp2px(value: Float, context: Context) =
-    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, value, context.resources.displayMetrics)
+private fun sp2px(
+  value: Float,
+  context: Context
+) =
+  TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, value, context.resources.displayMetrics)
